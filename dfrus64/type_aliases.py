@@ -1,0 +1,3 @@
+
+Rva = int
+Offset = int
