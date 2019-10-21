@@ -1,4 +1,4 @@
-from typing import Mapping, List, Collection
+from typing import Mapping, List
 from collections import defaultdict
 
 from pefile import PE
