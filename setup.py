@@ -1,5 +1,14 @@
 from setuptools import setup, find_packages
 
+install_requires = [
+      'pefile',
+      'click'
+]
+
+test_requires = [
+      'pytest'
+]
+
 setup(name='dfrus64',
       version='0.0.1',
       # description='',
@@ -8,8 +17,6 @@ setup(name='dfrus64',
       author_email='insolor@gmail.com',
       license='MIT',
       packages=find_packages(),
-      install_requires=[
-            'pefile',
-            'click'
-      ],
+      install_requires=install_requires,
+      test_requires=test_requires,
       zip_safe=False)
