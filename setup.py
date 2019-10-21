@@ -8,4 +8,8 @@ setup(name='dfrus64',
       author_email='insolor@gmail.com',
       license='MIT',
       packages=find_packages(),
+      install_requires=[
+            'pefile',
+            'click'
+      ],
       zip_safe=False)
