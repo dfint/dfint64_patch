@@ -85,8 +85,6 @@ def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addres
 
     for i in range(len(bytes_block)-3):
         relative_offset = int.from_bytes(bytes(view[i:i+4]), byteorder='little', signed=True)
-        if relative_offset < 0:
-            continue
 
         destination = base_address + i + 4 + relative_offset
 
