@@ -14,7 +14,18 @@ from dfrus64.extract_strings import *
                       b'bc'.ljust(4, b'\0') +
                       b'qwerty qwerty'.ljust(16, b'\0') +
                       b'xyz\0'),
-     {7: 'abc', 12: 'qwerty qwerty', 28: 'xyz'})
+     {7: 'abc', 12: 'qwerty qwerty', 28: 'xyz'}),
+    (dict(bytes_block=b'12345\xFF\0'), dict()),  # b'\xFF' cannot be decoded from cp437 encoding
 ])
 def test_extract_strings_from_raw_bytes(test_data, expected):
     assert extract_strings_from_raw_bytes(**test_data) == expected
+
+
+@pytest.mark.parametrize('test_data,expected', [
+    (dict(bytes_block=b'\0'*4, base_address=0, addresses=[4]), {4: [0]}),
+    (dict(bytes_block=0x1000.to_bytes(byteorder='little', length=4), base_address=0x10000, addresses=[0x11004]),
+     {0x11004: [0x10000]}),
+    # TODO: more tests
+])
+def test_find_relative_cross_references(test_data, expected):
+    assert find_relative_cross_references(**test_data) == expected
