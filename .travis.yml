@@ -7,5 +7,5 @@ install:
 script:
   - pip install -r test_requirements.txt
   - pip install codecov
-  - pytest --cov=./
+  - pytest --cov=./dfrus64
   - codecov

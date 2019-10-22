@@ -1,5 +1,6 @@
 *.ipynb
 *.pyc
+.coverage
 .idea/*
 venv/*
 .pytest_cache/*
