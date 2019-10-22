@@ -30,7 +30,7 @@ def check_string(buf: bytes, encoding) -> (int, int):
     :return: (string_length: int, number_of_letters: int)
     """
 
-    s_len = None
+    s_len = 0
     letters = 0
     for i, c in enumerate(buf):
         if c == 0:
