@@ -31,7 +31,8 @@ def test_extract_strings_from_raw_bytes(test_data, expected):
 
 @pytest.mark.parametrize('test_data,expected', [
     (dict(bytes_block=b'\0'*4, base_address=0, addresses=[4]), {4: [0]}),
-    (dict(bytes_block=0x1000.to_bytes(byteorder='little', length=4), base_address=0x10000, addresses=[0x11004]),
+    (dict(bytes_block=0x1000.to_bytes(byteorder='little', length=4) + b'\0'*4,
+          base_address=0x10000, addresses=[0x11004]),
      {0x11004: [0x10000]}),
     # TODO: more tests
 ])
