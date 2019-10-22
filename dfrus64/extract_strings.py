@@ -1,6 +1,10 @@
+import mmap
+import sys
+import operator
 from typing import Mapping, List
 from collections import defaultdict
 
+import click
 from pefile import PE
 
 from .type_aliases import *
@@ -92,3 +96,38 @@ def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addres
             result[destination].append(base_address + i)
 
     return result
+
+
+@click.command()
+@click.argument('file_name')
+@click.argument('out_file', default=None)
+def main(file_name, out_file):
+    with open(file_name, 'rb') as pe_file:
+        file_data = mmap.mmap(pe_file.fileno(), 0, access=mmap.ACCESS_READ)
+        pe = PE(data=file_data, fast_load=True)
+
+        # code_section = pe.sections[0]
+        string_section = pe.sections[1]
+
+        print(string_section)
+        print(hex(string_section.VirtualAddress))
+
+        image_base = pe.OPTIONAL_HEADER.ImageBase
+
+        if out_file is None:
+            file = sys.stdout
+        else:
+            file = open(out_file, 'w')
+
+        strings = extract_strings_from_raw_bytes(string_section.get_data(),
+                                                 base_address=string_section.VirtualAddress + image_base)
+
+        for address, string in sorted(strings.items(), key=operator.itemgetter(0)):
+            print(hex(address), string, file=file)
+
+        if out_file is None:
+            file.close()
+
+
+if __name__ == '__main__':
+    main()
