@@ -1,7 +1,7 @@
 import mmap
 import sys
 import operator
-from typing import Mapping
+from typing import Tuple, Iterator
 
 import click
 from pefile import PE
@@ -50,30 +50,28 @@ def check_string(buf: bytes, encoding) -> (int, int):
 
 
 def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding='cp437') \
-        -> Mapping[Rva, str]:
+        -> Iterator[Tuple[Rva, str]]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block
     :param bytes_block: block of bytes to be analyzed
     :param base_address: base address of the bytes block
     :param alignment: alignment of strings
     :param encoding: string encoding
-    :return: Mapping[string_address: Rva, string: str]
+    :return: Iterator[Tuple[string_address: Rva, string: str]]
     """
     view = memoryview(bytes_block)
-    strings = dict()
 
     i = 0
     while i < len(view):
         buffer_part = bytes(view[i:])
         string_len, letters = check_string(buffer_part, encoding)
         if string_len and letters:
-            strings[base_address+i] = bytes(view[i: i+string_len]).decode(encoding)
+            string = bytes(view[i: i + string_len]).decode(encoding)
+            yield base_address + i, string
             i += (string_len // alignment + 1) * alignment
             continue
 
         i += alignment
-
-    return strings
 
 
 @click.command()
@@ -97,14 +95,14 @@ def main(file_name, out_file):
         else:
             file = open(out_file, 'w')
 
-        strings = extract_strings_from_raw_bytes(string_section.get_data(),
-                                                 base_address=string_section.VirtualAddress + image_base)
+        strings = list(extract_strings_from_raw_bytes(string_section.get_data(),
+                                                      base_address=string_section.VirtualAddress + image_base))
 
         cross_references = find_relative_cross_references(code_section.get_data(),
                                                           base_address=code_section.VirtualAddress + image_base,
-                                                          addresses=strings.keys())
+                                                          addresses=map(operator.itemgetter(0), strings))
 
-        for address, string in sorted(strings.items(), key=operator.itemgetter(0)):
+        for address, string in sorted(strings, key=operator.itemgetter(0)):
             # Only objects with references from the code
             if address in cross_references:
                 print(hex(address), string, file=file)

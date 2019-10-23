@@ -1,4 +1,5 @@
 import mmap
+import operator
 
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
@@ -20,8 +21,8 @@ def main(file_name):
         image_base = pe.OPTIONAL_HEADER.ImageBase
 
         print("Extracting strings... ")
-        strings = extract_strings_from_raw_bytes(string_section.get_data(),
-                                                 base_address=string_section.VirtualAddress + image_base)
+        strings = dict(extract_strings_from_raw_bytes(string_section.get_data(),
+                                                      base_address=string_section.VirtualAddress + image_base))
 
         print('Found', len(strings), 'string-like objects')
 

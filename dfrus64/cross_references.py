@@ -1,6 +1,6 @@
 from collections import defaultdict
 from itertools import chain
-from typing import List, Mapping, Tuple, Iterable
+from typing import List, Mapping, Tuple, Iterable, Iterator
 
 from .type_aliases import Rva
 
@@ -38,7 +38,7 @@ def invert_cross_reference_table(cross_references: Mapping[Rva, List[Rva]]) -> M
     return result
 
 
-def find_intersected_cross_references(cross_references: Mapping[Rva, List[Rva]]) -> Iterable[Tuple[Rva, Rva]]:
+def find_intersected_cross_references(cross_references: Mapping[Rva, List[Rva]]) -> Iterator[Tuple[Rva, Rva]]:
     references = sorted(chain.from_iterable(cross_references.values()))
 
     for i, item in enumerate(references):

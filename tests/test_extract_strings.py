@@ -26,4 +26,4 @@ def test_check_string(test_data, encoding, expected):
     (dict(bytes_block=b'12345\xFF\0', encoding='utf-8'), dict()),  # b'\xFF' cannot be decoded from utf-8 encoding
 ])
 def test_extract_strings_from_raw_bytes(test_data, expected):
-    assert extract_strings_from_raw_bytes(**test_data) == expected
+    assert dict(extract_strings_from_raw_bytes(**test_data)) == expected
