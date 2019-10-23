@@ -1,5 +1,4 @@
 import mmap
-import sys
 
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes

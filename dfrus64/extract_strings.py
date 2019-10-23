@@ -6,6 +6,7 @@ from typing import Mapping
 import click
 from pefile import PE
 
+from .cross_references import find_relative_cross_references
 from .type_aliases import *
 
 forbidden = set(b'$^')
@@ -33,22 +34,23 @@ def check_string(buf: bytes, encoding) -> (int, int):
     :return: (string_length: int, number_of_letters: int)
     """
 
-    s_len = 0
-    letters = 0
+    string_length = 0
+    number_of_letters = 0
     for i, c in enumerate(buf):
         if c == 0:
-            s_len = i
+            string_length = i
             break
 
         if not is_allowed(c) or not possible_to_decode(buf[i:i + 1], encoding):
             break
         elif buf[i:i + 1].isalpha():
-            letters += 1
+            number_of_letters += 1
 
-    return s_len, letters
+    return string_length, number_of_letters
 
 
-def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding='cp437') -> Mapping[Rva, str]:
+def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding='cp437') \
+        -> Mapping[Rva, str]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block
     :param bytes_block: block of bytes to be analyzed
@@ -82,7 +84,7 @@ def main(file_name, out_file):
         file_data = mmap.mmap(pe_file.fileno(), 0, access=mmap.ACCESS_READ)
         pe = PE(data=file_data, fast_load=True)
 
-        # code_section = pe.sections[0]
+        code_section = pe.sections[0]
         string_section = pe.sections[1]
 
         print(string_section)
@@ -98,8 +100,14 @@ def main(file_name, out_file):
         strings = extract_strings_from_raw_bytes(string_section.get_data(),
                                                  base_address=string_section.VirtualAddress + image_base)
 
+        cross_references = find_relative_cross_references(code_section.get_data(),
+                                                          base_address=code_section.VirtualAddress + image_base,
+                                                          addresses=strings.keys())
+
         for address, string in sorted(strings.items(), key=operator.itemgetter(0)):
-            print(hex(address), string, file=file)
+            # Only objects with references from the code
+            if address in cross_references:
+                print(hex(address), string, file=file)
 
         if out_file is None:
             file.close()
