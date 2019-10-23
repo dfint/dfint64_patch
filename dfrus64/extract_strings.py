@@ -85,9 +85,6 @@ def main(file_name, out_file):
         code_section = pe.sections[0]
         string_section = pe.sections[1]
 
-        print(string_section)
-        print(hex(string_section.VirtualAddress))
-
         image_base = pe.OPTIONAL_HEADER.ImageBase
 
         if out_file is None:

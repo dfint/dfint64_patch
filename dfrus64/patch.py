@@ -1,5 +1,4 @@
 import mmap
-import operator
 
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
@@ -31,7 +30,7 @@ def main(file_name):
                                                           base_address=code_section.VirtualAddress + image_base,
                                                           addresses=strings)
 
-        object_rva_by_reference_rva = invert_cross_reference_table(cross_references)
+        object_rva_by_reference = invert_cross_reference_table(cross_references)
 
         print('Among them', len(cross_references), 'objects with references from code section')
         print('In total', sum(map(len, cross_references.values())), 'cross references')
@@ -41,8 +40,8 @@ def main(file_name):
         intersections = find_intersected_cross_references(cross_references)
 
         for ref1, ref2 in intersections:
-            obj1_rva = object_rva_by_reference_rva[ref1]
-            obj2_rva = object_rva_by_reference_rva[ref2]
+            obj1_rva = object_rva_by_reference[ref1]
+            obj2_rva = object_rva_by_reference[ref2]
             print('0x{:x} (to 0x{:x} {!r}) / '
                   '0x{:x} (to 0x{:x} {!r})'
                   .format(ref1, obj1_rva, strings[obj1_rva],
