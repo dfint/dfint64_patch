@@ -11,12 +11,15 @@ def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addres
     Analyse a block of bytes and try to find relative cross references to the given objects' addresses
     :param bytes_block: bytes block to analyze
     :param base_address: base address of the given block
-    :param addresses: list of addresses of objects
+    :param addresses: an iterable of addresses. In addition to list and other flat types it also can be range
+        (eg. `range(0x11000, 0x12000)`) or dict object.
     :return: Mapping[object_rva: Rva, cross_references: List[Rva]]
     """
     view = memoryview(bytes_block)
     result = defaultdict(list)
-    addresses = set(addresses)
+
+    if not isinstance(addresses, (range, dict)):
+        addresses = set(addresses)
 
     for i in range(len(bytes_block)-3):
         relative_offset = int.from_bytes(bytes(view[i:i+4]), byteorder='little', signed=True)

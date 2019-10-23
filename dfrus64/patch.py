@@ -29,7 +29,7 @@ def main(file_name):
         print('Searching for cross references...')
         cross_references = find_relative_cross_references(code_section.get_data(),
                                                           base_address=code_section.VirtualAddress + image_base,
-                                                          addresses=strings.keys())
+                                                          addresses=strings)
 
         object_rva_by_reference_rva = invert_cross_reference_table(cross_references)
 
