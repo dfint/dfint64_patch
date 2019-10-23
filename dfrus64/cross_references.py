@@ -2,7 +2,7 @@ from collections import defaultdict
 from itertools import chain
 from typing import List, Mapping, Tuple, Iterable
 
-from dfrus64.type_aliases import Rva
+from .type_aliases import Rva
 
 
 def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]) \
