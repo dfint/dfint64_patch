@@ -1,7 +1,7 @@
 import mmap
 import sys
 import operator
-from typing import Tuple, Iterator
+from typing import Tuple, Iterator, Union
 
 import click
 from pefile import PE
@@ -26,7 +26,7 @@ def possible_to_decode(c: bytes, encoding) -> bool:
         return True
 
 
-def check_string(buf: bytes, encoding) -> (int, int):
+def check_string(buf: Union[bytes, memoryview], encoding: str) -> (int, int):
     """
     Try to decode bytes as a string in the given encoding
     :param buf: byte buffer
@@ -41,9 +41,10 @@ def check_string(buf: bytes, encoding) -> (int, int):
             string_length = i
             break
 
-        if not is_allowed(c) or not possible_to_decode(buf[i:i + 1], encoding):
+        current_byte = bytes(buf[i:i + 1])
+        if not is_allowed(c) or not possible_to_decode(current_byte, encoding):
             break
-        elif buf[i:i + 1].isalpha():
+        elif current_byte.isalpha():
             number_of_letters += 1
 
     return string_length, number_of_letters
@@ -63,7 +64,7 @@ def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, al
 
     i = 0
     while i < len(view):
-        buffer_part = bytes(view[i:])
+        buffer_part = view[i:]
         string_len, letters = check_string(buffer_part, encoding)
         if string_len and letters:
             string = bytes(view[i: i + string_len]).decode(encoding)
