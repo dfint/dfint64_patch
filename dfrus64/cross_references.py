@@ -33,6 +33,11 @@ def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addres
 
 
 def invert_cross_reference_table(cross_references: Mapping[Rva, List[Rva]]) -> Mapping[Rva, Rva]:
+    """
+    Invert mapping from {Destination Rva: list of cross reverences} to {cross reference: destination}
+    :param cross_references:
+    :return: Mapping[source: Rva, destination: Rva] - inverted mapping
+    """
     result = dict()
     for object_rva, references in cross_references.items():
         for ref in references:
