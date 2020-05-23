@@ -1,5 +1,6 @@
 import mmap
 
+from .patch_charmap import search_charmap
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
 
@@ -15,13 +16,13 @@ def main(file_name):
         pe = PE(data=file_data, fast_load=True)
 
         code_section = pe.sections[0]
-        string_section = pe.sections[1]
+        data_section = pe.sections[1]
 
         image_base = pe.OPTIONAL_HEADER.ImageBase
 
         print("Extracting strings... ")
-        strings = dict(extract_strings_from_raw_bytes(string_section.get_data(),
-                                                      base_address=string_section.VirtualAddress + image_base))
+        strings = dict(extract_strings_from_raw_bytes(data_section.get_data(),
+                                                      base_address=data_section.VirtualAddress + image_base))
 
         print('Found', len(strings), 'string-like objects')
 
@@ -46,6 +47,14 @@ def main(file_name):
                   '0x{:x} (to 0x{:x} {!r})'
                   .format(ref1, obj1_rva, strings[obj1_rva],
                           ref2, obj2_rva, strings[obj2_rva]))
+
+        print("Searching for unicode table...")
+
+        address = search_charmap(data_section.get_data(), data_section.VirtualAddress + image_base)
+        if address is None:
+            print("Not found.")
+        else:
+            print("Found at address", hex(address))
 
 
 if __name__ == '__main__':
