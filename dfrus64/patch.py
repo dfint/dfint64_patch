@@ -33,7 +33,7 @@ def main(file_name):
 
         object_rva_by_reference = invert_cross_reference_table(cross_references)
 
-        print('Among them', len(cross_references), 'objects with references from code section')
+        print('Found', len(cross_references), 'objects with references from code section')
         print('In total', sum(map(len, cross_references.values())), 'cross references')
 
         print("Searching intersections in the cross references...")
@@ -50,11 +50,12 @@ def main(file_name):
 
         print("Searching for unicode table...")
 
-        address = search_charmap(data_section.get_data(), data_section.VirtualAddress + image_base)
-        if address is None:
+        unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
+        if unicode_table_rva is None:
             print("Not found.")
         else:
-            print("Found at address", hex(address))
+            print("Found at address 0x{:x} (offset 0x{:x})"
+                  .format(unicode_table_rva + image_base, pe.get_offset_from_rva(unicode_table_rva)))
 
 
 if __name__ == '__main__':
