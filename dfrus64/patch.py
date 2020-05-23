@@ -61,9 +61,10 @@ def main(source_file: str, patched_file: str, codepage: str) -> None:
                   .format(ref1, obj1_rva, strings[obj1_rva],
                           ref2, obj2_rva, strings[obj2_rva]))
 
-        print("Searching for unicode table...")
-
-        if codepage:
+        if not codepage:
+            print("Codepage is not set, skipping unicode table patch")
+        else:
+            print("Searching for unicode table...")
             unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
             unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
 
