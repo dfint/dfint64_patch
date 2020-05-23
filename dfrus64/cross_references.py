@@ -42,6 +42,11 @@ def invert_cross_reference_table(cross_references: Mapping[Rva, List[Rva]]) -> M
 
 
 def find_intersected_cross_references(cross_references: Mapping[Rva, List[Rva]]) -> Iterator[Tuple[Rva, Rva]]:
+    """
+    Find collisions of the references (ie. when one supposed reference intersects with another one)
+    :param cross_references: mapping of the cross references
+    :return: iterator of collisions
+    """
     references = sorted(chain.from_iterable(cross_references.values()))
 
     for i, item in enumerate(references):
