@@ -1,4 +1,4 @@
-from .binio import write_dwords, to_dword, read_bytes
+from .binio import write_dwords, to_dword
 from .type_aliases import Offset
 
 
