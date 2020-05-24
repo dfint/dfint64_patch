@@ -1,12 +1,35 @@
+import click
 import mmap
+from pefile import PE
+from shutil import copy
 
 from .patch_charmap import search_charmap, patch_unicode_table
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
 
-import click
-from pefile import PE
-from shutil import copy
+
+def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: str):
+    if not codepage:
+        print("Codepage is not set, skipping unicode table patch")
+    else:
+        print("Searching for unicode table...")
+        unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
+        unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
+
+        if unicode_table_rva is None:
+            print("Warning: unicode table not found. Skipping.")
+        else:
+            print("Found at address 0x{:x} (offset 0x{:x})"
+                  .format(unicode_table_rva + image_base, unicode_table_offset))
+
+            try:
+                pass
+                print(f"Patching unicode table to {codepage}...")
+                patch_unicode_table(pe_file, unicode_table_offset, codepage)
+            except KeyError:
+                print(f"Warning: codepage {codepage} not implemented. Skipping.")
+            else:
+                print("Done.")
 
 
 @click.command()
@@ -61,27 +84,7 @@ def main(source_file: str, patched_file: str, codepage: str) -> None:
                   .format(ref1, obj1_rva, strings[obj1_rva],
                           ref2, obj2_rva, strings[obj2_rva]))
 
-        if not codepage:
-            print("Codepage is not set, skipping unicode table patch")
-        else:
-            print("Searching for unicode table...")
-            unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
-            unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
-
-            if unicode_table_rva is None:
-                print("Warning: unicode table not found. Skipping.")
-            else:
-                print("Found at address 0x{:x} (offset 0x{:x})"
-                      .format(unicode_table_rva + image_base, unicode_table_offset))
-
-                try:
-                    pass
-                    print(f"Patching unicode table to {codepage}...")
-                    patch_unicode_table(pe_file, unicode_table_offset, codepage)
-                except KeyError:
-                    print(f"Warning: codepage {codepage} not implemented. Skipping.")
-                else:
-                    print("Done.")
+        fix_unicode_table(pe_file, pe, data_section, image_base, codepage)
 
 
 if __name__ == '__main__':
