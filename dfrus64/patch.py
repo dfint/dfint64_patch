@@ -32,21 +32,7 @@ def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: 
                 print("Done.")
 
 
-@click.command()
-@click.argument('source_file')
-@click.argument('patched_file')
-@click.argument('codepage', default='')
-def main(source_file: str, patched_file: str, codepage: str) -> None:
-    print(f"Copying '{source_file}'\nTo '{patched_file}'...")
-
-    try:
-        copy(source_file, patched_file)
-    except IOError:
-        print("Failed.")
-        return
-    else:
-        print("Success.")
-
+def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
     with open(patched_file, 'r+b') as pe_file:
         file_data = mmap.mmap(pe_file.fileno(), 0, access=mmap.ACCESS_READ + mmap.ACCESS_WRITE)
         pe = PE(data=file_data, fast_load=True)
@@ -56,7 +42,7 @@ def main(source_file: str, patched_file: str, codepage: str) -> None:
 
         image_base = pe.OPTIONAL_HEADER.ImageBase
 
-        print("Extracting strings... ")
+        print("Extracting strings...")
         strings = dict(extract_strings_from_raw_bytes(data_section.get_data(),
                                                       base_address=data_section.VirtualAddress + image_base))
 
@@ -85,6 +71,35 @@ def main(source_file: str, patched_file: str, codepage: str) -> None:
                           ref2, obj2_rva, strings[obj2_rva]))
 
         fix_unicode_table(pe_file, pe, data_section, image_base, codepage)
+
+        for string_rva, string in strings.items():
+            translation = translation_table[string]
+            pass
+
+
+@click.command()
+@click.argument('source_file')
+@click.argument('patched_file')
+@click.argument('codepage', default='')
+@click.argument('dictionary_file')
+def main(source_file: str, patched_file: str, codepage: str, dictionary_file: str) -> None:
+    print(f"Copying '{source_file}'\n"
+          f"To '{patched_file}'...")
+
+    try:
+        copy(source_file, patched_file)
+    except IOError:
+        print("Failed.")
+        return
+    else:
+        print("Success.")
+
+    # TODO: load translation table
+    translation_table = dict()  # stub
+
+    # TODO: split translation table for debugging
+
+    run(source_file, patched_file, translation_table, codepage)
 
 
 if __name__ == '__main__':
