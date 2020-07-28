@@ -78,10 +78,10 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
 
 
 @click.command()
-@click.argument('source_file')
-@click.argument('patched_file')
-@click.argument('codepage', default='')
-@click.argument('dictionary_file')
+@click.option('-p', 'source_file', 'Path to the Dwarf Fortress.exe file', default='Dwarf Fortress.exe')
+@click.option('-n', 'patched_file', 'Name of the patched DF executable', default='Dwarf Fortress Patched.exe')
+@click.option('-c', 'codepage', 'Enable support of the given codepage by name', default='')
+@click.option('-d', 'dictionary_file', 'Path to the dictionary csv file')
 def main(source_file: str, patched_file: str, codepage: str, dictionary_file: str) -> None:
     print(f"Copying '{source_file}'\n"
           f"To '{patched_file}'...")
