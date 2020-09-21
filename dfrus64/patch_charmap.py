@@ -102,7 +102,7 @@ class Encoder:
                 for i, char in enumerate(value):
                     self.lookup_table[chr_utf16(char)] = char_code + i
 
-    def encode(self, input_string: str, errors='strict') -> Tuple(bytes, int):
+    def encode(self, input_string: str, errors='strict') -> Tuple[bytes, int]:
         array = []
 
         for char in input_string:
