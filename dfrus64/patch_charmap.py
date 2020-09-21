@@ -1,3 +1,5 @@
+from typing import Callable, Tuple
+
 from .binio import write_dwords, to_dword
 from .type_aliases import Offset
 
@@ -100,7 +102,7 @@ class Encoder:
                 for i, char in enumerate(value):
                     self.lookup_table[chr_utf16(char)] = char_code + i
 
-    def encode(self, input_string: str, errors='strict') -> (bytes, int):
+    def encode(self, input_string: str, errors='strict') -> Tuple(bytes, int):
         array = []
 
         for char in input_string:
@@ -115,5 +117,5 @@ class Encoder:
 _encoders = {'viscii': Encoder(_additional_codepages['viscii'])}
 
 
-def get_encoder(encoding: str) -> 'text: str, errors: str -> bytes':
+def get_encoder(encoding: str) -> Callable[[str, str], bytes]:
     return lambda text, errors: _encoders[encoding].encode(text, errors=errors)
