@@ -6,13 +6,14 @@ install_requires = [
 ]
 
 test_requires = [
-      'pytest'
+      'pytest',
+      'pytest-cov'
 ]
 
 setup(name='dfrus64',
       version='0.0.1',
       # description='',
-      url='https://github.org/dfint/dfrus64',
+      url='https://github.com/dfint/dfrus64',
       author='insolor',
       author_email='insolor@gmail.com',
       license='MIT',
