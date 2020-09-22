@@ -1,3 +1,4 @@
+import unicodedata
 from typing import Callable, Tuple
 
 from .binio import write_dwords, to_dword
@@ -102,8 +103,7 @@ class Encoder:
 
     def encode(self, input_string: str, errors='strict') -> Tuple[bytes, int]:
         array = []
-
-        for char in input_string:
+        for char in unicodedata.normalize('NFC', input_string):
             if char in self.lookup_table:
                 array.append(self.lookup_table[char])
             else:
@@ -116,4 +116,4 @@ _encoders = {'viscii': Encoder(_additional_codepages['viscii'])}
 
 
 def get_encoder(encoding: str) -> Callable[[str, str], bytes]:
-    return lambda text, errors: _encoders[encoding].encode(text, errors=errors)
+    return lambda text, errors='strict': _encoders[encoding].encode(text, errors=errors)

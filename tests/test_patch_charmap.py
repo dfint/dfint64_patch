@@ -1,6 +1,6 @@
 import pytest
 
-from dfrus64.patch_charmap import Encoder, ord_utf16
+from dfrus64.patch_charmap import Encoder, ord_utf16, get_encoder
 
 
 @pytest.mark.parametrize('codepage_data,input_string,expected', [
@@ -9,3 +9,8 @@ from dfrus64.patch_charmap import Encoder, ord_utf16
 def test_encoder(codepage_data, input_string, expected):
     encoder = Encoder(codepage_data)
     assert encoder.encode(input_string) == (expected, len(expected))
+
+
+def test_combining_grave_accent():
+    text = 'ờ'
+    assert get_encoder('viscii')(text)[0]
