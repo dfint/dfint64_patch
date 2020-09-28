@@ -2,6 +2,7 @@ import click
 import mmap
 from pefile import PE
 from shutil import copy
+from contextlib import contextmanager
 
 from .patch_charmap import search_charmap, patch_unicode_table
 from .cross_references import *
@@ -77,29 +78,39 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
             pass
 
 
+@contextmanager
+def destination_file_context(src, dest):
+    print("Copying '{}'\nTo '{}'...".format(src, dest))
+    try:
+        copy(src, dest)
+    except IOError as ex:
+        print("Failed.")
+        raise ex
+    else:
+        print("Success.")
+    
+    try:
+        yield dest
+    except Exception as ex:
+        # print("Removing '{}'".format(dest))
+        # os.remove(dest)
+        raise ex
+
+
 @click.command()
 @click.option('-p', 'source_file', 'Path to the Dwarf Fortress.exe file', default='Dwarf Fortress.exe')
 @click.option('-n', 'patched_file', 'Name of the patched DF executable', default='Dwarf Fortress Patched.exe')
 @click.option('-c', 'codepage', 'Enable support of the given codepage by name', default='')
 @click.option('-d', 'dictionary_file', 'Path to the dictionary csv file')
 def main(source_file: str, patched_file: str, codepage: str, dictionary_file: str) -> None:
-    print(f"Copying '{source_file}'\n"
-          f"To '{patched_file}'...")
+    
+    with destination_file_context(source_file, patched_file):
+        # TODO: load translation table
+        translation_table = dict()  # stub
 
-    try:
-        copy(source_file, patched_file)
-    except IOError:
-        print("Failed.")
-        return
-    else:
-        print("Success.")
+        # TODO: split translation table for debugging
 
-    # TODO: load translation table
-    translation_table = dict()  # stub
-
-    # TODO: split translation table for debugging
-
-    run(source_file, patched_file, translation_table, codepage)
+        run(source_file, patched_file, translation_table, codepage)
 
 
 if __name__ == '__main__':
