@@ -5,3 +5,4 @@
 venv/*
 .pytest_cache/*
 dfrus64.egg-info
+dist
