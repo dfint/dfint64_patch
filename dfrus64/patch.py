@@ -1,3 +1,6 @@
+import os
+from typing import Optional
+
 import click
 import mmap
 from pefile import PE
@@ -74,12 +77,13 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
         fix_unicode_table(pe_file, pe, data_section, image_base, codepage)
 
         for string_rva, string in strings.items():
-            translation = translation_table[string]
-            pass
+            translation = translation_table.get(string)
+            if translation:
+                pass
 
 
 @contextmanager
-def destination_file_context(src, dest):
+def destination_file_context(src, dest, cleanup):
     print("Copying '{}'\nTo '{}'...".format(src, dest))
     try:
         copy(src, dest)
@@ -88,23 +92,30 @@ def destination_file_context(src, dest):
         raise ex
     else:
         print("Success.")
-    
+
     try:
         yield dest
     except Exception as ex:
-        # print("Removing '{}'".format(dest))
-        # os.remove(dest)
+        if cleanup:
+            print("Removing '{}'".format(dest))
+            os.remove(dest)
         raise ex
 
 
 @click.command()
-@click.option('-p', 'source_file', 'Path to the Dwarf Fortress.exe file', default='Dwarf Fortress.exe')
-@click.option('-n', 'patched_file', 'Name of the patched DF executable', default='Dwarf Fortress Patched.exe')
-@click.option('-c', 'codepage', 'Enable support of the given codepage by name', default='')
-@click.option('-d', 'dictionary_file', 'Path to the dictionary csv file')
-def main(source_file: str, patched_file: str, codepage: str, dictionary_file: str) -> None:
+@click.argument('source_file', default='Dwarf Fortress.exe',
+                type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+@click.argument('patched_file', default='Dwarf Fortress Patched.exe')
+@click.option('--dict', 'dictionary_file', help='Path to the dictionary csv file')
+@click.option('--codepage', 'codepage', help='Enable support of the given codepage by name', default=None)
+@click.option('--cleanup', 'cleanup', help='Remove patched file on error', default=False)
+def main(source_file: str,
+         patched_file: str,
+         codepage: Optional[str],
+         dictionary_file: str,
+         cleanup: bool) -> None:
     
-    with destination_file_context(source_file, patched_file):
+    with destination_file_context(source_file, patched_file, cleanup):
         # TODO: load translation table
         translation_table = dict()  # stub
 
