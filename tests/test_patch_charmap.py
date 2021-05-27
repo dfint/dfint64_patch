@@ -17,6 +17,5 @@ def test_combining_grave_accent():
 
 
 def test_get_codepages():
-    codepages = get_codepages()
-    for codepage in codepages:
+    for codepage in get_codepages():
         assert codepage in {'cp437', 'viscii'} or int(codepage[2:]) in range(700, 1253)

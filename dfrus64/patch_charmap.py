@@ -115,5 +115,7 @@ class Encoder:
 _encoders = {'viscii': Encoder(_additional_codepages['viscii'])}
 
 
-def get_encoder(encoding: str) -> Callable[[str, str], bytes]:
-    return lambda text, errors='strict': _encoders[encoding].encode(text, errors=errors)
+def get_encoder(encoding: str):
+    def encoder(text: str, errors: str = 'strict'):
+        return _encoders[encoding].encode(text, errors=errors)
+    return encoder
