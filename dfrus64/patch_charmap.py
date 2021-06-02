@@ -1,4 +1,6 @@
 import unicodedata
+
+from functools import lru_cache
 from typing import Callable, Tuple
 
 from .binio import write_dwords, to_dword
@@ -47,7 +49,6 @@ _additional_codepages = {
         0xF0: map(ord_utf16, 'đựòóôõỏọụùúũủýợỮ')
     }
 }
-_codepages = dict()
 
 
 def generate_charmap_table_patch(enc1, enc2):
@@ -57,17 +58,19 @@ def generate_charmap_table_patch(enc1, enc2):
                 if a != b and b.isalpha())
 
 
+@lru_cache(maxsize=None)
 def get_codepages():
-    if not _codepages:
-        for i in range(700, 1253):
-            try:
-                _codepages['cp%d' % i] = generate_charmap_table_patch('cp437', 'cp%d' % i)
-            except LookupError:
-                pass
-        
-        _codepages.update(_additional_codepages)
+    codepages = dict()
 
-    return _codepages
+    for i in range(700, 1253):
+        try:
+            codepages['cp%d' % i] = generate_charmap_table_patch('cp437', 'cp%d' % i)
+        except LookupError:
+            pass
+    
+    codepages.update(_additional_codepages)
+
+    return codepages
 
 
 def patch_unicode_table(fn, off, codepage):
@@ -115,7 +118,5 @@ class Encoder:
 _encoders = {'viscii': Encoder(_additional_codepages['viscii'])}
 
 
-def get_encoder(encoding: str):
-    def encoder(text: str, errors: str = 'strict'):
-        return _encoders[encoding].encode(text, errors=errors)
-    return encoder
+def get_encoder(encoding: str) -> Callable[[str, str], bytes]:
+    return lambda text, errors='strict': _encoders[encoding].encode(text, errors=errors)
