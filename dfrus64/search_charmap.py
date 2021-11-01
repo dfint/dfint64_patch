@@ -1,8 +1,10 @@
-from dfrus64.binio import to_dword
-from dfrus64.type_aliases import Offset
+from typing import Optional
+
+from .binio import to_dword
+from .type_aliases import Offset
 
 
-def search_charmap(bytes_block: bytes, offset: Offset = 0):
+def search_charmap(bytes_block: bytes, offset: Offset = 0) -> Optional[int]:
     unicode_table_start = b''.join(
         to_dword(item) for item in [0x20, 0x263A, 0x263B, 0x2665, 0x2666, 0x2663, 0x2660, 0x2022]
     )
