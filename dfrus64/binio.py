@@ -1,28 +1,29 @@
+from typing import BinaryIO, Iterable
+
 from .type_aliases import Offset
 
 
-def read_bytes(file_object, off: Offset, count=1) -> bytes:
-    file_object.seek(off)
+def read_bytes(file_object: BinaryIO, offset: Offset, count=1) -> bytes:
+    file_object.seek(offset)
     return file_object.read(count)
 
 
-def put_integer32(file_object, val):
+def write_dword(file_object: BinaryIO, val: int):
     file_object.write(val.to_bytes(4, byteorder='little'))
 
 
-def write_dwords(file_object, offset, dwords):
-    file_object.seek(offset)
+def write_dwords(file_object: BinaryIO, dwords: Iterable[int]):
     for x in dwords:
-        put_integer32(file_object, x)
+        write_dword(file_object, x)
 
 
-def to_dword(x, signed=False, byteorder='little'):
-    return x.to_bytes(length=4, byteorder=byteorder, signed=signed)
+def to_dword(number: int, signed: bool = False, byteorder: str = 'little'):
+    return number.to_bytes(length=4, byteorder=byteorder, signed=signed)
 
 
-def write_string(file_object, s: str, off=None, new_len=None, encoding=None):
-    if off is not None:
-        file_object.seek(off)
+def write_string(file_object: BinaryIO, s: str, offset: Offset = None, new_len: int = None, encoding: str = None):
+    if offset is not None:
+        file_object.seek(offset)
 
     if new_len is None:
         new_len = len(s) + 1

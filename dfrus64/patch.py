@@ -7,7 +7,8 @@ from pefile import PE
 from shutil import copy
 from contextlib import contextmanager
 
-from .patch_charmap import search_charmap, patch_unicode_table
+from .patch_charmap import patch_unicode_table
+from dfrus64.search_charmap import search_charmap
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
 
