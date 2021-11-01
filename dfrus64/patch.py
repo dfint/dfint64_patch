@@ -19,11 +19,12 @@ def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: 
     else:
         print("Searching for unicode table...")
         unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
-        unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
 
         if unicode_table_rva is None:
             print("Warning: unicode table not found. Skipping.")
         else:
+            unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
+
             print("Found at address 0x{:x} (offset 0x{:x})"
                   .format(unicode_table_rva + image_base, unicode_table_offset))
 
