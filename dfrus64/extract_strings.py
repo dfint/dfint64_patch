@@ -1,10 +1,9 @@
-import mmap
-import sys
 import operator
+import sys
 from typing import Tuple, Iterator, Union
 
 import click
-from pefile import PE
+from peclasses.portable_executable import PortableExecutable
 
 from .cross_references import find_relative_cross_references
 from .type_aliases import *
@@ -80,13 +79,13 @@ def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, al
 @click.argument('out_file', default=None)
 def main(file_name, out_file):
     with open(file_name, 'rb') as pe_file:
-        file_data = mmap.mmap(pe_file.fileno(), 0, access=mmap.ACCESS_READ)
-        pe = PE(data=file_data, fast_load=True)
+        pe = PortableExecutable(pe_file)
 
-        code_section = pe.sections[0]
-        string_section = pe.sections[1]
+        sections = pe.section_table
+        code_section = sections[0]
+        string_section = sections[1]
 
-        image_base = pe.OPTIONAL_HEADER.ImageBase
+        image_base = pe.optional_header.image_base
 
         if out_file is None:
             file = sys.stdout

@@ -1,19 +1,18 @@
 import os
-from typing import Optional
+from contextlib import contextmanager
+from shutil import copy
+from typing import Optional, cast
 
 import click
-import mmap
-from pefile import PE
-from shutil import copy
-from contextlib import contextmanager
+from peclasses.portable_executable import PortableExecutable
 
-from .patch_charmap import patch_unicode_table
-from .search_charmap import search_charmap
 from .cross_references import *
 from .extract_strings import extract_strings_from_raw_bytes
+from .patch_charmap import patch_unicode_table
+from .search_charmap import search_charmap
 
 
-def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: str):
+def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):
     if not codepage:
         print("Codepage is not set, skipping unicode table patch")
     else:
@@ -23,7 +22,7 @@ def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: 
         if unicode_table_rva is None:
             print("Warning: unicode table not found. Skipping.")
         else:
-            unicode_table_offset = pe.get_offset_from_rva(unicode_table_rva)
+            unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
 
             print("Found at address 0x{:x} (offset 0x{:x})"
                   .format(unicode_table_rva + image_base, unicode_table_offset))
@@ -40,13 +39,13 @@ def fix_unicode_table(pe_file, pe: PE, data_section, image_base: int, codepage: 
 
 def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
     with open(patched_file, 'r+b') as pe_file:
-        file_data = mmap.mmap(pe_file.fileno(), 0, access=mmap.ACCESS_READ + mmap.ACCESS_WRITE)
-        pe = PE(data=file_data, fast_load=True)
+        pe = PortableExecutable(pe_file)
 
-        code_section = pe.sections[0]
-        data_section = pe.sections[1]
+        sections = pe.section_table
+        code_section = sections[0]
+        data_section = sections[1]
 
-        image_base = pe.OPTIONAL_HEADER.ImageBase
+        image_base = cast(int, pe.optional_header.image_base)
 
         print("Extracting strings...")
         strings = dict(extract_strings_from_raw_bytes(data_section.get_data(),
