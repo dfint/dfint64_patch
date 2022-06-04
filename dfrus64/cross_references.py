@@ -5,8 +5,9 @@ from typing import List, Mapping, Tuple, Iterable, Iterator
 from .type_aliases import Rva
 
 
-def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]) \
-        -> Mapping[Rva, List[Rva]]:
+def find_relative_cross_references(
+    bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]
+) -> Mapping[Rva, List[Rva]]:
     """
     Analyse a block of bytes and try to find relative cross references to the given objects' addresses
     :param bytes_block: bytes block to analyze
@@ -21,8 +22,8 @@ def find_relative_cross_references(bytes_block: bytes, base_address: Rva, addres
     if not isinstance(addresses, (range, dict)):
         addresses = set(addresses)
 
-    for i in range(len(bytes_block)-3):
-        relative_offset = int.from_bytes(bytes(view[i:i+4]), byteorder='little', signed=True)
+    for i in range(len(bytes_block) - 3):
+        relative_offset = int.from_bytes(bytes(view[i : i + 4]), byteorder="little", signed=True)
 
         destination = base_address + i + 4 + relative_offset
 

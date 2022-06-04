@@ -8,12 +8,12 @@ from peclasses.portable_executable import PortableExecutable
 from .cross_references import find_relative_cross_references
 from .type_aliases import *
 
-forbidden = set(b'$^')
-allowed = set(b'\r\t')
+forbidden = set(b"$^")
+allowed = set(b"\r\t")
 
 
 def is_allowed(x: int) -> bool:
-    return x in allowed or (ord(' ') <= x and x not in forbidden)
+    return x in allowed or (ord(" ") <= x and x not in forbidden)
 
 
 def possible_to_decode(c: bytes, encoding) -> bool:
@@ -40,7 +40,7 @@ def check_string(buf: Union[bytes, memoryview], encoding: str) -> (int, int):
             string_length = i
             break
 
-        current_byte = bytes(buf[i:i + 1])
+        current_byte = bytes(buf[i : i + 1])
         if not is_allowed(c) or not possible_to_decode(current_byte, encoding):
             break
         elif current_byte.isalpha():
@@ -49,8 +49,9 @@ def check_string(buf: Union[bytes, memoryview], encoding: str) -> (int, int):
     return string_length, number_of_letters
 
 
-def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding='cp437') \
-        -> Iterator[Tuple[Rva, str]]:
+def extract_strings_from_raw_bytes(
+    bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding="cp437"
+) -> Iterator[Tuple[Rva, str]]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block
     :param bytes_block: block of bytes to be analyzed
@@ -66,7 +67,7 @@ def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, al
         buffer_part = view[i:]
         string_len, letters = check_string(buffer_part, encoding)
         if string_len and letters:
-            string = bytes(view[i: i + string_len]).decode(encoding)
+            string = bytes(view[i : i + string_len]).decode(encoding)
             yield base_address + i, string
             i += (string_len // alignment + 1) * alignment
             continue
@@ -75,10 +76,10 @@ def extract_strings_from_raw_bytes(bytes_block: bytes, base_address: Rva = 0, al
 
 
 @click.command()
-@click.argument('file_name')
-@click.argument('out_file', default=None)
+@click.argument("file_name")
+@click.argument("out_file", default=None)
 def main(file_name, out_file):
-    with open(file_name, 'rb') as pe_file:
+    with open(file_name, "rb") as pe_file:
         pe = PortableExecutable(pe_file)
 
         sections = pe.section_table
@@ -90,14 +91,19 @@ def main(file_name, out_file):
         if out_file is None:
             file = sys.stdout
         else:
-            file = open(out_file, 'w')
+            file = open(out_file, "w")
 
-        strings = list(extract_strings_from_raw_bytes(string_section.get_data(),
-                                                      base_address=string_section.VirtualAddress + image_base))
+        strings = list(
+            extract_strings_from_raw_bytes(
+                string_section.get_data(), base_address=string_section.VirtualAddress + image_base
+            )
+        )
 
-        cross_references = find_relative_cross_references(code_section.get_data(),
-                                                          base_address=code_section.VirtualAddress + image_base,
-                                                          addresses=map(operator.itemgetter(0), strings))
+        cross_references = find_relative_cross_references(
+            code_section.get_data(),
+            base_address=code_section.VirtualAddress + image_base,
+            addresses=map(operator.itemgetter(0), strings),
+        )
 
         for address, string in sorted(strings, key=operator.itemgetter(0)):
             # Only objects with references from the code
@@ -108,5 +114,5 @@ def main(file_name, out_file):
             file.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
