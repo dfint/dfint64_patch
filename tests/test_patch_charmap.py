@@ -1,6 +1,6 @@
 import pytest
 
-from dfrus64.patch_charmap import Encoder, ord_utf16, get_encoder, get_codepages
+from dfrus64.patch_charmap import Encoder, get_codepages, get_encoder, ord_utf16
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from itertools import chain
-from typing import List, Mapping, Tuple, Iterable, Iterator
+from typing import Iterable, Iterator, List, Mapping, Tuple
 
 from .type_aliases import Rva
 

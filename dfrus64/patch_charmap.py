@@ -1,9 +1,9 @@
 import codecs
 import functools
 import unicodedata
-from typing import Tuple, Mapping, Iterable, Dict, Union, BinaryIO, Callable
+from typing import BinaryIO, Callable, Dict, Iterable, Mapping, Tuple, Union
 
-from .binio import write_dwords, write_dword
+from .binio import write_dword, write_dwords
 from .type_aliases import Offset
 
 

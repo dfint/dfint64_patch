@@ -1,6 +1,6 @@
 import operator
 import sys
-from typing import Tuple, Iterator, Union
+from typing import Iterator, Tuple, Union
 
 import click
 from peclasses.portable_executable import PortableExecutable
