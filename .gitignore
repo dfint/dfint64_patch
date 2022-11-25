@@ -1,3 +1,10 @@
+htmlcov
 *.ipynb
+*.pyc
+.coverage
+coverage.xml
 .idea/*
 venv/*
+.pytest_cache/*
+dfrus64.egg-info
+dist
