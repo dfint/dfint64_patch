@@ -6,3 +6,18 @@
 
 Text patcher for x64 bit version of the Dwarf Fortress game (work in progress, started in October 2019).
 
+You need python 3.7+ and poetry installed (`pip3 install poetry` or `pip install poetry`). Then run `poetry install` from the command line: it will create a virtual environment in the project's directory and install all the requirements into it. 
+
+Basic usage examples:
+```commandline
+> poetry run extract
+Usage: extract [OPTIONS] FILE_NAME OUT_FILE
+Try 'extract --help' for help.
+```
+```commandline
+> poetry run patch
+Usage: patch [OPTIONS] [SOURCE_FILE] [PATCHED_FILE]
+Try 'patch --help' for help.
+
+Error: Invalid value for '[SOURCE_FILE]': File 'Dwarf Fortress.exe' does not exist.
+```
