@@ -5,3 +5,4 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/42d223b64187d6e7a05c/maintainability)](https://codeclimate.com/github/dfint/dfrus64/maintainability)
 
 Text patcher for x64 bit version of the Dwarf Fortress game (work in progress, started in October 2019).
+

@@ -3,6 +3,7 @@ import sys
 from typing import Iterator, Tuple, Union
 
 import click
+from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
 from .cross_references import find_relative_cross_references
@@ -108,7 +109,7 @@ def main(file_name, out_file):
         for address, string in sorted(strings, key=operator.itemgetter(0)):
             # Only objects with references from the code
             if address in cross_references:
-                print(hex(address), string, file=file)
+                logger.info(hex(address), string, file=file)
 
         if out_file is None:
             file.close()

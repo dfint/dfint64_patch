@@ -4,6 +4,7 @@ from shutil import copy
 from typing import Optional, cast
 
 import click
+from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
 from .cross_references import *
@@ -14,28 +15,28 @@ from .search_charmap import search_charmap
 
 def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):
     if not codepage:
-        print("Codepage is not set, skipping unicode table patch")
+        logger.info("Codepage is not set, skipping unicode table patch")
     else:
-        print("Searching for unicode table...")
+        logger.info("Searching for unicode table...")
         unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
 
         if unicode_table_rva is None:
-            print("Warning: unicode table not found. Skipping.")
+            logger.info("Warning: unicode table not found. Skipping.")
         else:
             unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
 
-            print(
+            logger.info(
                 "Found at address 0x{:x} (offset 0x{:x})".format(unicode_table_rva + image_base, unicode_table_offset)
             )
 
             try:
                 pass
-                print(f"Patching unicode table to {codepage}...")
+                logger.info(f"Patching unicode table to {codepage}...")
                 patch_unicode_table(pe_file, unicode_table_offset, codepage)
             except KeyError:
-                print(f"Warning: codepage {codepage} not implemented. Skipping.")
+                logger.info(f"Warning: codepage {codepage} not implemented. Skipping.")
             else:
-                print("Done.")
+                logger.info("Done.")
 
 
 def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
@@ -48,33 +49,33 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
 
         image_base = cast(int, pe.optional_header.image_base)
 
-        print("Extracting strings...")
+        logger.info("Extracting strings...")
         strings = dict(
             extract_strings_from_raw_bytes(
                 data_section.get_data(), base_address=data_section.VirtualAddress + image_base
             )
         )
 
-        print("Found", len(strings), "string-like objects")
+        logger.info("Found", len(strings), "string-like objects")
 
-        print("Searching for cross references...")
+        logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
             code_section.get_data(), base_address=code_section.VirtualAddress + image_base, addresses=strings
         )
 
         object_rva_by_reference = invert_cross_reference_table(cross_references)
 
-        print("Found", len(cross_references), "objects with references from code section")
-        print("In total", sum(map(len, cross_references.values())), "cross references")
+        logger.info("Found", len(cross_references), "objects with references from code section")
+        logger.info("In total", sum(map(len, cross_references.values())), "cross references")
 
-        print("Searching intersections in the cross references...")
+        logger.info("Searching intersections in the cross references...")
 
         intersections = find_intersected_cross_references(cross_references)
 
         for ref1, ref2 in intersections:
             obj1_rva = object_rva_by_reference[ref1]
             obj2_rva = object_rva_by_reference[ref2]
-            print(
+            logger.info(
                 "0x{:x} (to 0x{:x} {!r}) / "
                 "0x{:x} (to 0x{:x} {!r})".format(ref1, obj1_rva, strings[obj1_rva], ref2, obj2_rva, strings[obj2_rva])
             )
@@ -89,20 +90,20 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
 
 @contextmanager
 def destination_file_context(src, dest, cleanup):
-    print("Copying '{}'\nTo '{}'...".format(src, dest))
+    logger.info("Copying '{}'\nTo '{}'...".format(src, dest))
     try:
         copy(src, dest)
     except IOError as ex:
-        print("Failed.")
+        logger.info("Failed.")
         raise ex
     else:
-        print("Success.")
+        logger.info("Success.")
 
     try:
         yield dest
     except Exception as ex:
         if cleanup:
-            print("Removing '{}'".format(dest))
+            logger.info("Removing '{}'".format(dest))
             os.remove(dest)
         raise ex
 
