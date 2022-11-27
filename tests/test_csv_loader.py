@@ -8,11 +8,11 @@ from hypothesis import strategies as st
 
 from dfrus64.dictionary_loaders.csv_loader import load_translation_file
 
-valid_text = st.text(alphabet=string.printable)
-valid_translation = valid_text
+text_strategy = st.text(alphabet=string.printable).filter(lambda text: not ("\\r" in text or "\\t" in text))
+translation_strategy = text_strategy
 
 
-@given(st.lists(st.tuples(valid_text, valid_translation)))
+@given(st.lists(st.tuples(text_strategy, translation_strategy)))
 @example([("\tsome\rtext", "\tкакой-то\rтекст")])
 def test_load_translation_file(dictionary: List[Tuple[str, str]]):
     file = io.StringIO()
@@ -26,4 +26,4 @@ def test_load_translation_file(dictionary: List[Tuple[str, str]]):
 
     file.seek(0)
 
-    assert list(load_translation_file(file)) == dictionary, (dictionary, file.getvalue())
+    assert list(load_translation_file(file)) == dictionary
