@@ -96,7 +96,8 @@ def main(file_name, out_file):
 
         strings = list(
             extract_strings_from_raw_bytes(
-                string_section.get_data(), base_address=string_section.VirtualAddress + image_base
+                string_section.get_data(),
+                base_address=string_section.VirtualAddress + image_base,
             )
         )
 

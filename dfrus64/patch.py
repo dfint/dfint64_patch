@@ -27,7 +27,8 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
         logger.info("Extracting strings...")
         strings = dict(
             extract_strings_from_raw_bytes(
-                data_section.get_data(), base_address=data_section.VirtualAddress + image_base
+                data_section.get_data(),
+                base_address=data_section.VirtualAddress + image_base,
             )
         )
 
@@ -35,7 +36,9 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
 
         logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
-            code_section.get_data(), base_address=code_section.VirtualAddress + image_base, addresses=strings
+            code_section.get_data(),
+            base_address=code_section.VirtualAddress + image_base,
+            addresses=strings,
         )
 
         object_rva_by_reference = invert_cross_reference_table(cross_references)

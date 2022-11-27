@@ -22,7 +22,10 @@ def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base:
             unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
 
             logger.info(
-                "Found at address 0x{:x} (offset 0x{:x})".format(unicode_table_rva + image_base, unicode_table_offset)
+                "Found at address 0x{:x} (offset 0x{:x})".format(
+                    unicode_table_rva + image_base,
+                    unicode_table_offset,
+                )
             )
 
             try:
