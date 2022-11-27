@@ -1,13 +1,17 @@
 import os
 from contextlib import contextmanager
 from shutil import copy
-from typing import Optional, cast
+from typing import Mapping, Optional, cast
 
 import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from dfrus64.cross_references import *
+from dfrus64.cross_references import (
+    find_intersected_cross_references,
+    find_relative_cross_references,
+    invert_cross_reference_table,
+)
 from dfrus64.extract_strings import extract_strings_from_raw_bytes
 from dfrus64.patch_charmap import patch_unicode_table
 from dfrus64.search_charmap import search_charmap

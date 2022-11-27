@@ -1,6 +1,6 @@
 import pytest
 
-from dfrus64.extract_strings import *
+from dfrus64.extract_strings import check_string, extract_strings_from_raw_bytes
 
 
 @pytest.mark.parametrize(

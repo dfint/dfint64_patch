@@ -7,7 +7,7 @@ from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
 from dfrus64.cross_references import find_relative_cross_references
-from dfrus64.type_aliases import *
+from dfrus64.type_aliases import Rva
 
 forbidden = set(b"$^")
 allowed = set(b"\r\t")
