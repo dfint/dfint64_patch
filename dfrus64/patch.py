@@ -5,7 +5,7 @@ from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
 from dfrus64.backup import copy_source_file_context
-from dfrus64.charmap.cli import fix_unicode_table
+from dfrus64.charmap.cli import patch_charmap
 from dfrus64.cross_references import (
     find_intersected_cross_references,
     find_relative_cross_references,
@@ -15,6 +15,8 @@ from dfrus64.extract_strings import extract_strings_from_raw_bytes
 
 
 def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
+    patch_charmap(patched_file, codepage)
+
     with open(patched_file, "r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
@@ -57,8 +59,6 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
                 "0x{:x} (to 0x{:x} {!r}) / "
                 "0x{:x} (to 0x{:x} {!r})".format(ref1, obj1_rva, strings[obj1_rva], ref2, obj2_rva, strings[obj2_rva])
             )
-
-        fix_unicode_table(pe_file, pe, data_section, image_base, codepage)
 
         for string_rva, string in strings.items():
             translation = translation_table.get(string)

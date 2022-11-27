@@ -66,7 +66,8 @@ def get_codepages() -> Mapping[str, Mapping[int, Union[int, Iterable[int]]]]:
 
     for i in range(700, 1253):
         try:
-            codepages["cp%d" % i] = generate_charmap_table_patch("cp437", "cp%d" % i)
+            codepage_code = "cp{}".format(i)
+            codepages[codepage_code] = generate_charmap_table_patch("cp437", codepage_code)
         except LookupError:
             pass
 

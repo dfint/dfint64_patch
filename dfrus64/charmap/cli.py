@@ -12,34 +12,35 @@ from dfrus64.charmap.search_charmap import search_charmap
 def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):
     if not codepage:
         logger.info("Codepage is not set, skipping unicode table patch")
+        return
+
+    logger.info("Searching for unicode table...")
+    unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
+
+    if unicode_table_rva is None:
+        logger.info("Warning: unicode table not found. Skipping.")
+        return
+
+    unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
+
+    logger.info(
+        "Found at address 0x{:x} (offset 0x{:x})".format(
+            unicode_table_rva + image_base,
+            unicode_table_offset,
+        )
+    )
+
+    try:
+        logger.info(f"Patching unicode table to {codepage}...")
+        patch_unicode_table(pe_file, unicode_table_offset, codepage)
+    except KeyError:
+        logger.info(f"Warning: codepage {codepage} not implemented. Skipping.")
     else:
-        logger.info("Searching for unicode table...")
-        unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
-
-        if unicode_table_rva is None:
-            logger.info("Warning: unicode table not found. Skipping.")
-        else:
-            unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
-
-            logger.info(
-                "Found at address 0x{:x} (offset 0x{:x})".format(
-                    unicode_table_rva + image_base,
-                    unicode_table_offset,
-                )
-            )
-
-            try:
-                pass
-                logger.info(f"Patching unicode table to {codepage}...")
-                patch_unicode_table(pe_file, unicode_table_offset, codepage)
-            except KeyError:
-                logger.info(f"Warning: codepage {codepage} not implemented. Skipping.")
-            else:
-                logger.info("Done.")
+        logger.info("Done.")
 
 
-def patch_charmap(patched_file: str, codepage: str):
-    with open(patched_file, "r+b") as pe_file:
+def patch_charmap(file_path: str, codepage: str):
+    with open(file_path, "r+b") as pe_file:
         pe = PortableExecutable(pe_file)
         sections = pe.section_table
         data_section = sections[1]
