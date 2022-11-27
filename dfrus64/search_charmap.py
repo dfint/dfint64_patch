@@ -1,7 +1,7 @@
 from typing import Optional
 
-from .binio import to_dword
-from .type_aliases import Offset
+from dfrus64.binio import to_dword
+from dfrus64.type_aliases import Offset
 
 
 def search_charmap(bytes_block: bytes, offset: Offset = 0) -> Optional[int]:

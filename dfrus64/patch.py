@@ -7,10 +7,10 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from .cross_references import *
-from .extract_strings import extract_strings_from_raw_bytes
-from .patch_charmap import patch_unicode_table
-from .search_charmap import search_charmap
+from dfrus64.cross_references import *
+from dfrus64.extract_strings import extract_strings_from_raw_bytes
+from dfrus64.patch_charmap import patch_unicode_table
+from dfrus64.search_charmap import search_charmap
 
 
 def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):

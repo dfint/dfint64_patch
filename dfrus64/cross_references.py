@@ -2,7 +2,7 @@ from collections import defaultdict
 from itertools import chain
 from typing import Iterable, Iterator, List, Mapping, Tuple
 
-from .type_aliases import Rva
+from dfrus64.type_aliases import Rva
 
 
 def find_relative_cross_references(

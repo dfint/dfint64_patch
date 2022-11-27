@@ -1,6 +1,6 @@
 from typing import BinaryIO, Iterable
 
-from .type_aliases import Offset
+from dfrus64.type_aliases import Offset
 
 
 def read_bytes(file_object: BinaryIO, offset: Offset, count=1) -> bytes:
