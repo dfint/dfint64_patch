@@ -1,46 +1,17 @@
-import os
-from contextlib import contextmanager
-from shutil import copy
 from typing import Mapping, Optional, cast
 
 import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from dfrus64.charmap.patch_charmap import patch_unicode_table
-from dfrus64.charmap.search_charmap import search_charmap
+from dfrus64.backup import copy_source_file_context
+from dfrus64.charmap.cli import fix_unicode_table
 from dfrus64.cross_references import (
     find_intersected_cross_references,
     find_relative_cross_references,
     invert_cross_reference_table,
 )
 from dfrus64.extract_strings import extract_strings_from_raw_bytes
-
-
-def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):
-    if not codepage:
-        logger.info("Codepage is not set, skipping unicode table patch")
-    else:
-        logger.info("Searching for unicode table...")
-        unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
-
-        if unicode_table_rva is None:
-            logger.info("Warning: unicode table not found. Skipping.")
-        else:
-            unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
-
-            logger.info(
-                "Found at address 0x{:x} (offset 0x{:x})".format(unicode_table_rva + image_base, unicode_table_offset)
-            )
-
-            try:
-                pass
-                logger.info(f"Patching unicode table to {codepage}...")
-                patch_unicode_table(pe_file, unicode_table_offset, codepage)
-            except KeyError:
-                logger.info(f"Warning: codepage {codepage} not implemented. Skipping.")
-            else:
-                logger.info("Done.")
 
 
 def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
@@ -92,29 +63,11 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
                 pass
 
 
-@contextmanager
-def destination_file_context(src, dest, cleanup):
-    logger.info("Copying '{}'\nTo '{}'...".format(src, dest))
-    try:
-        copy(src, dest)
-    except IOError as ex:
-        logger.info("Failed.")
-        raise ex
-    else:
-        logger.info("Success.")
-
-    try:
-        yield dest
-    except Exception as ex:
-        if cleanup:
-            logger.info("Removing '{}'".format(dest))
-            os.remove(dest)
-        raise ex
-
-
 @click.command()
 @click.argument(
-    "source_file", default="Dwarf Fortress.exe", type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+    "source_file",
+    default="Dwarf Fortress.exe",
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
 )
 @click.argument("patched_file", default="Dwarf Fortress Patched.exe")
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
@@ -122,7 +75,7 @@ def destination_file_context(src, dest, cleanup):
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
 def main(source_file: str, patched_file: str, codepage: Optional[str], dictionary_file: str, cleanup: bool) -> None:
 
-    with destination_file_context(source_file, patched_file, cleanup):
+    with copy_source_file_context(source_file, patched_file, cleanup):
         # TODO: load translation table
         translation_table = dict()  # stub
 

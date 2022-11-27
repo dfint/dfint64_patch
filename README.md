@@ -21,3 +21,10 @@ Try 'patch --help' for help.
 
 Error: Invalid value for '[SOURCE_FILE]': File 'Dwarf Fortress.exe' does not exist.
 ```
+```commandline
+> poetry run patch_charmap
+Usage: patch_charmap [OPTIONS] [SOURCE_FILE] [PATCHED_FILE] CODEPAGE
+Try 'patch_charmap --help' for help.
+
+Error: Invalid value for '[SOURCE_FILE]': File 'Dwarf Fortress.exe' does not exist.
+```
