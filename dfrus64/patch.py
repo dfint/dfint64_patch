@@ -1,4 +1,4 @@
-from typing import Mapping, Optional, cast
+from typing import List, Optional, Tuple, cast
 
 import click
 from loguru import logger
@@ -11,10 +11,11 @@ from dfrus64.cross_references import (
     find_relative_cross_references,
     invert_cross_reference_table,
 )
+from dfrus64.dictionary_loaders.csv_loader import load_translation_file
 from dfrus64.extract_strings import extract_strings_from_raw_bytes
 
 
-def run(source_file: str, patched_file: str, translation_table: Mapping[str, str], codepage: str):
+def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: str):
     patch_charmap(patched_file, codepage)
 
     with open(patched_file, "r+b") as pe_file:
@@ -60,8 +61,9 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
                 "0x{:x} (to 0x{:x} {!r})".format(ref1, obj1_rva, strings[obj1_rva], ref2, obj2_rva, strings[obj2_rva])
             )
 
+        translation_dictionary = dict(translation_table)
         for string_rva, string in strings.items():
-            translation = translation_table.get(string)
+            translation = translation_dictionary.get(string)
             if translation:
                 pass
 
@@ -79,8 +81,10 @@ def run(source_file: str, patched_file: str, translation_table: Mapping[str, str
 def main(source_file: str, patched_file: str, codepage: Optional[str], dictionary_file: str, cleanup: bool) -> None:
 
     with copy_source_file_context(source_file, patched_file, cleanup):
-        # TODO: load translation table
-        translation_table = dict()  # stub
+        logger.info("Loading translation file...")
+
+        with open(dictionary_file, encoding="utf-8") as trans:
+            translation_table = list(load_translation_file(trans))
 
         # TODO: split translation table for debugging
 
