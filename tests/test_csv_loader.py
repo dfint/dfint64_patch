@@ -12,7 +12,7 @@ valid_text = st.text(alphabet=string.printable)
 valid_translation = valid_text
 
 
-@given(st.lists(st.tuples(valid_text, valid_text)))
+@given(st.lists(st.tuples(valid_text, valid_translation)))
 @example([("\tsome\rtext", "\tкакой-то\rтекст")])
 def test_load_translation_file(dictionary: List[Tuple[str, str]]):
     file = io.StringIO()
