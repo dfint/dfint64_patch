@@ -21,7 +21,7 @@ hypothesis = "^6.58.1"
 coverage = "^6.5.0"
 
 [tool.poetry.scripts]
-extract = "dfrus64.extract_strings:main"
+extract = "dfrus64.extract_strings.cli:main"
 patch = "dfrus64.patch:main"
 patch_charmap = "dfrus64.charmap.cli:main"
 
