@@ -9,11 +9,11 @@ def find_relative_cross_references(
     bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]
 ) -> Mapping[Rva, List[Rva]]:
     """
-    Analyse a block of bytes and try to find relative cross references to the given objects' addresses
-    :param bytes_block: bytes block to analyze
+    Analyse a block of bytes and try to find relative cross-references to the given objects' addresses
+    :param bytes_block: bytes block to analyse
     :param base_address: base address of the given block
     :param addresses: an iterable of addresses. In addition to list and other flat types it also can be range
-        (eg. `range(0x11000, 0x12000)`) or dict object.
+        (e.g. `range(0x11000, 0x12000)`) or dict object.
     :return: Mapping[object_rva: Rva, cross_references: List[Rva]]
     """
     view = memoryview(bytes_block)

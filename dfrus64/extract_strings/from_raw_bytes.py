@@ -1,3 +1,10 @@
+"""
+Portable Executable x64 mostly has relative cross-reference to static objects (strings),
+and they don't appear in a relocation table.
+So it is only possible to find strings by linear search in the data section, and then find relative cross-references
+in the code section.
+"""
+
 from typing import Iterator, Tuple, Union
 
 from dfrus64.type_aliases import Rva

@@ -6,13 +6,13 @@ from peclasses.portable_executable import PortableExecutable
 
 from dfrus64.backup import copy_source_file_context
 from dfrus64.charmap.cli import patch_charmap
-from dfrus64.cross_references import (
+from dfrus64.cross_references.cross_references_relative import (
     find_intersected_cross_references,
     find_relative_cross_references,
     invert_cross_reference_table,
 )
 from dfrus64.dictionary_loaders.csv_loader import load_translation_file
-from dfrus64.extract_strings import extract_strings_from_raw_bytes
+from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
 def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: str):

@@ -5,8 +5,10 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from dfrus64.cross_references import find_relative_cross_references
-from dfrus64.extract_strings.extract_strings import extract_strings_from_raw_bytes
+from dfrus64.cross_references.cross_references_relative import (
+    find_relative_cross_references,
+)
+from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
 @click.command()

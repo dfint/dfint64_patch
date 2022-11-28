@@ -3,7 +3,7 @@ import io
 import string
 from typing import List, Tuple
 
-from hypothesis import given, example
+from hypothesis import example, given
 from hypothesis import strategies as st
 
 from dfrus64.dictionary_loaders.csv_loader import load_translation_file

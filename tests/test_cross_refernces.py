@@ -1,6 +1,6 @@
 import pytest
 
-from dfrus64.cross_references import (
+from dfrus64.cross_references.cross_references_relative import (
     find_intersected_cross_references,
     find_relative_cross_references,
     invert_cross_reference_table,
