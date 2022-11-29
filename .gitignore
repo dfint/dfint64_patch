@@ -10,3 +10,4 @@ venv/
 dfrus64.egg-info/
 dist/
 .hypothesis/
+*.exe

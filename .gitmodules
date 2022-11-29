@@ -1,0 +1,3 @@
+[submodule "tests/fasmw_includes"]
+	path = tests/includes
+	url = https://github.com/insolor/fasmw_includes
