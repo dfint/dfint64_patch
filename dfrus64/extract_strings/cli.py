@@ -1,6 +1,6 @@
 import operator
 import sys
-from typing import BinaryIO, TextIO, cast
+from typing import BinaryIO, Iterator, Tuple, cast
 
 import click
 from loguru import logger
@@ -13,7 +13,7 @@ from dfrus64.cross_references.cross_references_relative import (
 from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def extract_strings(pe_file: BinaryIO, file: TextIO) -> None:
+def extract_strings(pe_file: BinaryIO) -> Iterator[Tuple[int, str]]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table
@@ -38,7 +38,7 @@ def extract_strings(pe_file: BinaryIO, file: TextIO) -> None:
     for address, string in sorted(strings, key=operator.itemgetter(0)):
         # Only objects with references from the code
         if address in cross_references:
-            logger.info(hex(address), string, file=file)
+            yield address, string
 
 
 @click.command()
@@ -51,7 +51,8 @@ def main(file_name, out_file):
         else:
             out_file_object = open(out_file, "w")
 
-        extract_strings(pe_file, out_file_object)
+        for address, string in extract_strings(pe_file):
+            logger.info(hex(address), string, file=out_file_object)
 
         if out_file is None:
             out_file_object.close()

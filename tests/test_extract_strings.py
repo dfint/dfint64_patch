@@ -55,5 +55,5 @@ def test_extract_strings_from_raw_bytes(test_data, expected):
 def test_extract_string_cli():
     exe_file_path = Path(__file__).parent / "test64.exe"
     with io.StringIO() as result, open(exe_file_path, "rb") as pe_file:
-        extract_strings(pe_file, result)
-        assert "Hello, World!" in result.getvalue().splitlines()
+        result = list(map(lambda x: x[1], extract_strings(pe_file)))
+        assert "Hello, World!" in result
