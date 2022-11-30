@@ -15,7 +15,7 @@ from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_byte
 
 @click.command()
 @click.argument("file_name")
-@click.argument("out_file", default=None)
+@click.argument("out_file", default=None, required=False)
 def main(file_name, out_file):
     with open(file_name, "rb") as pe_file:
         pe = PortableExecutable(pe_file)
