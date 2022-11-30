@@ -1,4 +1,6 @@
-from typing import BinaryIO, Iterable
+from typing import BinaryIO, Iterable, cast
+
+from peclasses.section_table import Section
 
 from dfrus64.type_aliases import Offset
 
@@ -17,8 +19,8 @@ def write_dwords(file_object: BinaryIO, dwords: Iterable[int]):
         write_dword(file_object, x)
 
 
-def to_dword(number: int, signed: bool = False, byteorder: str = "little"):
-    return number.to_bytes(length=4, byteorder=byteorder, signed=signed)
+def to_dword(number: int, signed: bool = False):
+    return number.to_bytes(length=4, byteorder="little", signed=signed)
 
 
 def write_string(file_object: BinaryIO, s: str, offset: Offset = None, new_len: int = None, encoding: str = None):
@@ -34,3 +36,11 @@ def write_string(file_object: BinaryIO, s: str, offset: Offset = None, new_len: 
         s = s.encode(encoding)
 
     file_object.write(s.ljust(new_len, b"\0"))
+
+
+def read_section_data(file: BinaryIO, section: Section) -> bytes:
+    return read_bytes(
+        file,
+        cast(int, section.pointer_to_raw_data),
+        cast(int, section.size_of_raw_data),
+    )

@@ -1,21 +1,22 @@
-from typing import cast
+from typing import BinaryIO, cast
 
 import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
+from binio import read_section_data
 from dfrus64.backup import copy_source_file_context
 from dfrus64.charmap.patch_charmap import patch_unicode_table
 from dfrus64.charmap.search_charmap import search_charmap
 
 
-def fix_unicode_table(pe_file, pe: PortableExecutable, data_section, image_base: int, codepage: str):
+def fix_unicode_table(pe_file: BinaryIO, pe: PortableExecutable, data_section, image_base: int, codepage: str):
     if not codepage:
         logger.info("Codepage is not set, skipping unicode table patch")
         return
 
     logger.info("Searching for unicode table...")
-    unicode_table_rva = search_charmap(data_section.get_data(), data_section.VirtualAddress)
+    unicode_table_rva = search_charmap(read_section_data(pe_file, data_section), data_section.VirtualAddress)
 
     if unicode_table_rva is None:
         logger.info("Warning: unicode table not found. Skipping.")
