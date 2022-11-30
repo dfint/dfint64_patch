@@ -4,8 +4,8 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from binio import read_section_data
 from dfrus64.backup import copy_source_file_context
+from dfrus64.binio import read_section_data
 from dfrus64.charmap.patch_charmap import patch_unicode_table
 from dfrus64.charmap.search_charmap import search_charmap
 

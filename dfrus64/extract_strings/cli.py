@@ -6,7 +6,7 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from binio import read_section_data
+from dfrus64.binio import read_section_data
 from dfrus64.cross_references.cross_references_relative import (
     find_relative_cross_references,
 )
