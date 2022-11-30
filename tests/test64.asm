@@ -10,7 +10,7 @@ start:
     invoke ExitProcess, 0
 
 .data
-    sHello db 'Hello!', 10, 13
+    sHello db 'Hello!'
     .length = $ - sHello
     hOut dq ?
 

@@ -1,5 +1,9 @@
+import io
+from pathlib import Path
+
 import pytest
 
+from dfrus64.extract_strings.cli import extract_strings
 from dfrus64.extract_strings.from_raw_bytes import (
     check_string,
     extract_strings_from_raw_bytes,
@@ -46,3 +50,10 @@ def test_check_string(test_data, encoding, expected):
 )
 def test_extract_strings_from_raw_bytes(test_data, expected):
     assert dict(extract_strings_from_raw_bytes(**test_data)) == expected
+
+
+def test_extract_string_cli():
+    exe_file_path = Path(__file__).parent / "test64.exe"
+    with io.StringIO() as result, open(exe_file_path, "rb") as pe_file:
+        extract_strings(pe_file, result)
+        assert "Hello, World!" in result.getvalue().splitlines()
