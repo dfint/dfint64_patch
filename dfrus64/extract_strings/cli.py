@@ -5,7 +5,6 @@ from typing import cast
 import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
-from peclasses.section_table import Section
 
 from binio import read_section_data
 from dfrus64.cross_references.cross_references_relative import (
@@ -22,8 +21,8 @@ def main(file_name, out_file):
         pe = PortableExecutable(pe_file)
 
         sections = pe.section_table
-        code_section: Section = sections[0]
-        string_section: Section = sections[1]
+        code_section = sections[0]
+        string_section = sections[1]
 
         image_base = cast(int, pe.optional_header.image_base)
 

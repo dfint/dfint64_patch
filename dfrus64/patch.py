@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple, cast
 import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
-from peclasses.section_table import Section
 
 from binio import read_section_data
 from dfrus64.backup import copy_source_file_context
@@ -24,8 +23,8 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
         pe = PortableExecutable(pe_file)
 
         sections = pe.section_table
-        code_section: Section = sections[0]
-        data_section: Section = sections[1]
+        code_section = sections[0]
+        data_section = sections[1]
 
         image_base = cast(int, pe.optional_header.image_base)
 
