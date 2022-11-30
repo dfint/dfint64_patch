@@ -40,7 +40,7 @@ def main(file_name, out_file):
 
         cross_references = find_relative_cross_references(
             read_section_data(pe_file, code_section),
-            base_address=code_section.VirtualAddress + image_base,
+            base_address=cast(int, code_section.virtual_address) + image_base,
             addresses=map(operator.itemgetter(0), strings),
         )
 

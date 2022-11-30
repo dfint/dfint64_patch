@@ -16,7 +16,7 @@ def fix_unicode_table(pe_file: BinaryIO, pe: PortableExecutable, data_section, i
         return
 
     logger.info("Searching for unicode table...")
-    unicode_table_rva = search_charmap(read_section_data(pe_file, data_section), data_section.VirtualAddress)
+    unicode_table_rva = search_charmap(read_section_data(pe_file, data_section), data_section.virtual_address)
 
     if unicode_table_rva is None:
         logger.info("Warning: unicode table not found. Skipping.")
