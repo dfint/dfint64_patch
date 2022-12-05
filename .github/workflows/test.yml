@@ -31,7 +31,7 @@ jobs:
 
     - name: Compile test exe file
       run: |
-        cd tests & make build
+        cd tests && make build
 
     - name: Install Poetry
       uses: snok/install-poetry@v1.1.6
