@@ -27,7 +27,7 @@ jobs:
 
     - name: Install fasm
       run: |
-        apt install fasm
+        sudo apt install fasm
 
     - name: Compile test exe file
       run: |
