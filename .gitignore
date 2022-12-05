@@ -10,3 +10,10 @@ venv/
 dfrus64.egg-info/
 dist/
 .hypothesis/
+*.exe
+
+# Ignore IDA files
+*.i64
+*.id?
+*.nam
+*.til

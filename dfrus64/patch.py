@@ -4,8 +4,8 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from binio import read_section_data
 from dfrus64.backup import copy_source_file_context
+from dfrus64.binio import read_section_data
 from dfrus64.charmap.cli import patch_charmap
 from dfrus64.cross_references.cross_references_relative import (
     find_intersected_cross_references,
@@ -32,7 +32,7 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
         strings = dict(
             extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
-                base_address=data_section.VirtualAddress + image_base,
+                base_address=cast(int, data_section.virtual_address) + image_base,
             )
         )
 
@@ -41,7 +41,7 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
         logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
             read_section_data(pe_file, code_section),
-            base_address=code_section.VirtualAddress + image_base,
+            base_address=cast(int, code_section.virtual_address) + image_base,
             addresses=strings,
         )
 
