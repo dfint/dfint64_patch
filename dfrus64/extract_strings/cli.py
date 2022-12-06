@@ -52,6 +52,7 @@ def main(file_name, out_file):
             out_file_object = open(out_file, "w")
 
         for address, string in extract_strings(pe_file):
+            print(string, file=out_file_object)
             logger.info("0x{:X} {!r}", address, string, file=out_file_object)
 
         if out_file is None:
