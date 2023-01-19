@@ -1,6 +1,6 @@
 import operator
 import sys
-from typing import BinaryIO, Iterator, Tuple, cast
+from typing import BinaryIO, Iterator, cast
 
 import click
 from loguru import logger
@@ -10,10 +10,10 @@ from dfrus64.binio import read_section_data
 from dfrus64.cross_references.cross_references_relative import (
     find_relative_cross_references,
 )
-from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
+from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes, ExtractedStringInfo
 
 
-def extract_strings(pe_file: BinaryIO, sort_by_xref: bool) -> Iterator[Tuple[int, str]]:
+def extract_strings(pe_file: BinaryIO, sort_by_xref: bool = False) -> Iterator[ExtractedStringInfo]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table
@@ -38,7 +38,7 @@ def extract_strings(pe_file: BinaryIO, sort_by_xref: bool) -> Iterator[Tuple[int
     strings = filter(lambda x: x[0] in cross_references, strings)
 
     if sort_by_xref:
-        strings = sorted(strings, key=lambda s: min(cross_references.get(s[0])))
+        strings = sorted(strings, key=lambda s: min(cross_references.get(s.offset)))
 
     yield from strings
 

@@ -5,9 +5,9 @@ So it is only possible to find strings by linear search in the data section, and
 in the code section.
 """
 
-from typing import Iterator, Tuple, Union
+from typing import Iterator, Union, NamedTuple
 
-from dfrus64.type_aliases import Rva
+from dfrus64.type_aliases import Rva, Offset
 
 forbidden = set(b"$^")
 allowed = set(b"\r\t")
@@ -50,12 +50,17 @@ def check_string(buf: Union[bytes, memoryview], encoding: str) -> (int, int):
     return string_length, number_of_letters
 
 
+class ExtractedStringInfo(NamedTuple):
+    offset: Offset
+    string: str
+
+
 def extract_strings_from_raw_bytes(
     bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding="cp437"
-) -> Iterator[Tuple[Rva, str]]:
+) -> Iterator[ExtractedStringInfo]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block
-    :param bytes_block: block of bytes to be analyzed
+    :param bytes_block: a block of bytes to be analyzed
     :param base_address: base address of the bytes block
     :param alignment: alignment of strings
     :param encoding: string encoding
@@ -69,7 +74,7 @@ def extract_strings_from_raw_bytes(
         string_len, letters = check_string(buffer_part, encoding)
         if string_len and letters:
             string = bytes(view[i : i + string_len]).decode(encoding)
-            yield base_address + i, string
+            yield ExtractedStringInfo(base_address + i, string)
             i += (string_len // alignment + 1) * alignment
             continue
 
