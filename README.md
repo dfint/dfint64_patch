@@ -10,21 +10,28 @@ You need python 3.7+ and poetry installed (`pip3 install poetry` or `pip install
 
 Basic usage examples:
 ```commandline
-> poetry run extract
-Usage: extract [OPTIONS] FILE_NAME OUT_FILE
-Try 'extract --help' for help.
+> poetry run extract --help
+Usage: extract [OPTIONS] FILE_NAME [OUT_FILE]
+
+Options:
+  --sort-by-xref  Sort extracted strings by cross-reference
+  --help          Show this message and exit.
 ```
 ```commandline
-> poetry run patch
+> poetry run patch --help
 Usage: patch [OPTIONS] [SOURCE_FILE] [PATCHED_FILE]
-Try 'patch --help' for help.
 
-Error: Invalid value for '[SOURCE_FILE]': File 'Dwarf Fortress.exe' does not exist.
+Options:
+  --dict TEXT        Path to the dictionary csv file
+  --codepage TEXT    Enable support of the given codepage by name
+  --cleanup BOOLEAN  Remove patched file on error
+  --help             Show this message and exit.
 ```
 ```commandline
-> poetry run patch_charmap
+> poetry run patch_charmap --help
 Usage: patch_charmap [OPTIONS] [SOURCE_FILE] [PATCHED_FILE] CODEPAGE
-Try 'patch_charmap --help' for help.
 
-Error: Invalid value for '[SOURCE_FILE]': File 'Dwarf Fortress.exe' does not exist.
+Options:
+  --cleanup BOOLEAN  Remove patched file on error
+  --help             Show this message and exit.
 ```
