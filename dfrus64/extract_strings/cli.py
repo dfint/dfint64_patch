@@ -13,7 +13,7 @@ from dfrus64.cross_references.cross_references_relative import (
 from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def extract_strings(pe_file: BinaryIO) -> Iterator[Tuple[int, str]]:
+def extract_strings(pe_file: BinaryIO, sort_by_xref: bool) -> Iterator[Tuple[int, str]]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table
@@ -35,23 +35,28 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[Tuple[int, str]]:
         addresses=map(operator.itemgetter(0), strings),
     )
 
-    for address, string in sorted(strings, key=operator.itemgetter(0)):
-        # Only objects with references from the code
-        if address in cross_references:
-            yield address, string
+    strings = filter(lambda x: x[0] in cross_references, strings)
+
+    if sort_by_xref:
+        strings = sorted(strings, key=lambda s: min(cross_references.get(s[0])))
+
+    yield from strings
 
 
 @click.command()
 @click.argument("file_name")
 @click.argument("out_file", default=None, required=False)
-def main(file_name, out_file):
+@click.option(
+    "--sort-by-xref", "sort_by_xref", is_flag=True, default=False, help="Sort extracted strings by cross-reference"
+)
+def main(file_name, out_file, sort_by_xref):
     with open(file_name, "rb") as pe_file:
         if out_file is None:
             out_file_object = sys.stdout
         else:
             out_file_object = open(out_file, "w")
 
-        for address, string in extract_strings(pe_file):
+        for address, string in extract_strings(pe_file, sort_by_xref):
             print(string, file=out_file_object)
             logger.info("0x{:X} {!r}", address, string, file=out_file_object)
 
