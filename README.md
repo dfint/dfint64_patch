@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/dfint/dfrus64/branch/master/graph/badge.svg?token=hDoXyRj4FB)](https://codecov.io/gh/dfint/dfrus64)
 [![Maintainability](https://api.codeclimate.com/v1/badges/42d223b64187d6e7a05c/maintainability)](https://codeclimate.com/github/dfint/dfrus64/maintainability)
 
-Text patcher for x64 bit version of the Dwarf Fortress game (work in progress, started in October 2019).
+Text patcher for x64 bit version of the Dwarf Fortress game (work in progress).
 
 You need python 3.7+ and poetry installed (`pip3 install poetry` or `pip install poetry`). Then run `poetry install` from the command line: it will create a virtual environment in the project's directory and install all the requirements into it. 
 
