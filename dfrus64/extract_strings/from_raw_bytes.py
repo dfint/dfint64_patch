@@ -9,8 +9,8 @@ from typing import Iterator, Union, NamedTuple
 
 from dfrus64.type_aliases import Rva, Offset
 
-forbidden = set(b"$^")
-allowed = set(b"\r\t")
+forbidden = set(b"$^@")
+allowed = set()
 
 
 def is_allowed(x: int) -> bool:
