@@ -1,6 +1,7 @@
 import operator
 import sys
-from typing import BinaryIO, Iterator, cast
+from contextlib import contextmanager
+from typing import BinaryIO, Iterator, Optional, cast
 
 import click
 from loguru import logger
@@ -44,22 +45,34 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
     yield from strings
 
 
+@contextmanager
+def maybe_open(file_name: Optional[str]):
+    """
+    Open a file if the name is provided, and close it on exit from with-block,
+    or provide stdout as a file object, if the file_name parameter is None
+    :param file_name: file name or None
+    :return:
+    """
+    if file_name is None:
+        file_object = sys.stdout
+    else:
+        file_object = open(file_name, "w")
+
+    try:
+        yield file_object
+    finally:
+        if file_object != sys.stdout:
+            file_object.close()
+
+
 @click.command()
 @click.argument("file_name")
 @click.argument("out_file", default=None, required=False)
 def main(file_name, out_file):
-    with open(file_name, "rb") as pe_file:
-        if out_file is None:
-            out_file_object = sys.stdout
-        else:
-            out_file_object = open(out_file, "w")
-
+    with open(file_name, "rb") as pe_file, maybe_open(out_file) as out_file_object:
         for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)
             logger.info("0x{:X} {!r}", address, string, file=out_file_object)
-
-        if out_file is None:
-            out_file_object.close()
 
 
 if __name__ == "__main__":
