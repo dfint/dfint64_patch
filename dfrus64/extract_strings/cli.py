@@ -13,7 +13,7 @@ from dfrus64.cross_references.cross_references_relative import (
 from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes, ExtractedStringInfo
 
 
-def extract_strings(pe_file: BinaryIO, sort_by_xref: bool = False) -> Iterator[ExtractedStringInfo]:
+def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table
@@ -36,9 +36,7 @@ def extract_strings(pe_file: BinaryIO, sort_by_xref: bool = False) -> Iterator[E
     )
 
     strings = filter(lambda x: x[0] in cross_references, strings)
-
-    if sort_by_xref:
-        strings = sorted(strings, key=lambda s: min(cross_references.get(s.offset)))
+    strings = sorted(strings, key=lambda s: min(cross_references.get(s.offset)))
 
     yield from strings
 
@@ -46,17 +44,14 @@ def extract_strings(pe_file: BinaryIO, sort_by_xref: bool = False) -> Iterator[E
 @click.command()
 @click.argument("file_name")
 @click.argument("out_file", default=None, required=False)
-@click.option(
-    "--sort-by-xref", "sort_by_xref", is_flag=True, default=False, help="Sort extracted strings by cross-reference"
-)
-def main(file_name, out_file, sort_by_xref):
+def main(file_name, out_file):
     with open(file_name, "rb") as pe_file:
         if out_file is None:
             out_file_object = sys.stdout
         else:
             out_file_object = open(out_file, "w")
 
-        for address, string in extract_strings(pe_file, sort_by_xref):
+        for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)
             logger.info("0x{:X} {!r}", address, string, file=out_file_object)
 
