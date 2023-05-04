@@ -1,3 +1,5 @@
+import contextlib
+import io
 import tempfile
 from pathlib import Path
 
@@ -71,4 +73,18 @@ def test_extract_strings_cli_2():
         with open(file_name) as file:
             strings = [line.rstrip() for line in file.readlines()]
 
+        assert "Hello, World!" in strings
+
+
+def test_extract_strings_cli_3():
+    exe_file_path = Path(__file__).parent / "test64.exe"
+    stdout = io.StringIO()
+
+    with contextlib.redirect_stdout(stdout):
+        try:
+            main([str(exe_file_path)])
+        except SystemExit:
+            pass
+
+        strings = stdout.getvalue().splitlines()
         assert "Hello, World!" in strings
