@@ -18,7 +18,7 @@ flake8 = "^5.0.4"
 black = "^22.10.0"
 isort = "^5.10.1"
 hypothesis = "^6.58.2"
-coverage = "^6.5.0"
+coverage = "^7.2.5"
 
 [tool.poetry.scripts]
 extract = "dfrus64.extract_strings.cli:main"
