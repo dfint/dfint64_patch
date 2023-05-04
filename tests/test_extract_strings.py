@@ -1,8 +1,9 @@
+import tempfile
 from pathlib import Path
 
 import pytest
 
-from dfrus64.extract_strings.cli import extract_strings
+from dfrus64.extract_strings.cli import extract_strings, main
 from dfrus64.extract_strings.from_raw_bytes import (
     check_string,
     extract_strings_from_raw_bytes,
@@ -55,4 +56,19 @@ def test_extract_string_cli():
     exe_file_path = Path(__file__).parent / "test64.exe"
     with open(exe_file_path, "rb") as pe_file:
         strings = list(map(lambda x: x.string, extract_strings(pe_file)))
+        assert "Hello, World!" in strings
+
+
+def test_extract_strings_cli_2():
+    exe_file_path = Path(__file__).parent / "test64.exe"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        file_name = Path(temp_dir) / "string_dump.txt"
+        try:
+            main([str(exe_file_path), str(file_name)])
+        except SystemExit:
+            pass
+
+        with open(file_name) as file:
+            strings = [line.rstrip() for line in file.readlines()]
+
         assert "Hello, World!" in strings
