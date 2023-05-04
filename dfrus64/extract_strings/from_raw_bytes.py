@@ -5,7 +5,7 @@ So it is only possible to find strings by linear search in the data section, and
 in the code section.
 """
 
-from typing import Iterator, Union, NamedTuple
+from typing import Iterator, Union, NamedTuple, Tuple
 
 from dfrus64.type_aliases import Rva, Offset
 
@@ -26,7 +26,7 @@ def possible_to_decode(c: bytes, encoding) -> bool:
         return True
 
 
-def check_string(buf: Union[bytes, memoryview], encoding: str) -> (int, int):
+def check_string(buf: Union[bytes, memoryview], encoding: str) -> Tuple[int, int]:
     """
     Try to decode bytes as a string in the given encoding
     :param buf: byte buffer
