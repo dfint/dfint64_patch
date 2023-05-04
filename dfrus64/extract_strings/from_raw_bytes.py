@@ -5,9 +5,9 @@ So it is only possible to find strings by linear search in the data section, and
 in the code section.
 """
 
-from typing import Iterator, Union, NamedTuple, Tuple
+from typing import Iterator, NamedTuple, Tuple, Union
 
-from dfrus64.type_aliases import Rva, Offset
+from dfrus64.type_aliases import Offset, Rva
 
 forbidden = set(b"$^@")
 allowed = set()

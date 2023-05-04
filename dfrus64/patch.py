@@ -80,7 +80,6 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
 @click.option("--codepage", "codepage", help="Enable support of the given codepage by name", default=None)
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
 def main(source_file: str, patched_file: str, codepage: Optional[str], dictionary_file: str, cleanup: bool) -> None:
-
     with copy_source_file_context(source_file, patched_file, cleanup):
         logger.info("Loading translation file...")
 

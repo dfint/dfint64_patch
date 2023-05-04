@@ -10,7 +10,10 @@ from dfrus64.binio import read_section_data
 from dfrus64.cross_references.cross_references_relative import (
     find_relative_cross_references,
 )
-from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes, ExtractedStringInfo
+from dfrus64.extract_strings.from_raw_bytes import (
+    ExtractedStringInfo,
+    extract_strings_from_raw_bytes,
+)
 
 
 def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
