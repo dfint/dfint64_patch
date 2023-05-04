@@ -14,8 +14,7 @@ Basic usage examples:
 Usage: extract [OPTIONS] FILE_NAME [OUT_FILE]
 
 Options:
-  --sort-by-xref  Sort extracted strings by cross-reference
-  --help          Show this message and exit.
+  --help  Show this message and exit.
 ```
 ```commandline
 > poetry run patch --help
