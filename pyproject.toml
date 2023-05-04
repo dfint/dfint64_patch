@@ -16,7 +16,7 @@ pytest = "^7.3.1"
 pytest-cov = "^4.0.0"
 flake8 = "^5.0.4"
 black = "^22.10.0"
-isort = "^5.10.1"
+isort = "^5.11.5"
 hypothesis = "^6.58.2"
 coverage = "^7.2.5"
 
