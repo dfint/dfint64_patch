@@ -16,8 +16,9 @@ from dfrus64.dictionary_loaders.csv_loader import load_translation_file
 from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: str):
-    patch_charmap(patched_file, codepage)
+def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: Optional[str]):
+    if codepage is not None:
+        patch_charmap(patched_file, codepage)
 
     with open(patched_file, "r+b") as pe_file:
         pe = PortableExecutable(pe_file)

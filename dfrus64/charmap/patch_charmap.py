@@ -1,7 +1,7 @@
 import codecs
 import functools
 import unicodedata
-from typing import BinaryIO, Callable, Dict, Iterable, Mapping, Tuple, Union
+from typing import BinaryIO, Callable, Dict, Iterable, Mapping, Tuple, Union, cast
 
 from dfrus64.binio import write_dword, write_dwords
 from dfrus64.type_aliases import Offset
@@ -81,9 +81,9 @@ def patch_unicode_table(file: BinaryIO, offset: Offset, codepage: str):
     for code, value in patch.items():
         file.seek(offset + code * 4)
         if isinstance(value, int):
-            write_dword(file, patch[code])
+            write_dword(file, cast(int, patch[code]))
         else:
-            write_dwords(file, patch[code])
+            write_dwords(file, cast(Iterable[int], patch[code]))
 
 
 class Encoder:

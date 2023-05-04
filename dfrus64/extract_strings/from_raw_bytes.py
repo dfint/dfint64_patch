@@ -5,12 +5,12 @@ So it is only possible to find strings by linear search in the data section, and
 in the code section.
 """
 
-from typing import Iterator, NamedTuple, Tuple, Union
+from typing import Iterator, NamedTuple, Set, Tuple, Union
 
 from dfrus64.type_aliases import Offset, Rva
 
-forbidden = set(b"$^@")
-allowed = set()
+forbidden: Set[int] = set(b"$^@")
+allowed: Set[int] = set()
 
 
 def is_allowed(x: int) -> bool:

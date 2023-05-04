@@ -31,11 +31,11 @@ def write_string(file_object: BinaryIO, s: str, offset: Offset = None, new_len: 
         new_len = len(s) + 1
 
     if encoding is None:
-        s = s.encode()
+        bs = s.encode()
     else:
-        s = s.encode(encoding)
+        bs = s.encode(encoding)
 
-    file_object.write(s.ljust(new_len, b"\0"))
+    file_object.write(bs.ljust(new_len, b"\0"))
 
 
 def read_section_data(file: BinaryIO, section: Section) -> bytes:

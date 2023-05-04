@@ -39,10 +39,10 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
         addresses=map(operator.itemgetter(0), strings),
     )
 
-    strings = filter(lambda x: x[0] in cross_references, strings)
-    strings = sorted(strings, key=lambda s: min(cross_references.get(s.offset)))
+    filtered = filter(lambda x: x[0] in cross_references, strings)
+    result = sorted(filtered, key=lambda s: min(cross_references[s.offset]))
 
-    yield from strings
+    yield from result
 
 
 @contextmanager

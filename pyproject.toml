@@ -11,7 +11,7 @@ click = "^8.0.1"
 peclasses = { url = "https://github.com/dfint/peclasses/releases/download/0.4.0/peclasses-0.4.0-py3-none-any.whl" }
 loguru = "^0.7.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
 pytest-cov = "^4.0.0"
 flake8 = "^5.0.4"
@@ -19,6 +19,7 @@ black = "^23.3.0"
 isort = "^5.11.5"
 hypothesis = "^6.58.2"
 coverage = "^7.2.5"
+mypy = "^1.2.0"
 
 [tool.poetry.scripts]
 extract = "dfrus64.extract_strings.cli:main"
@@ -34,3 +35,6 @@ line-length = 120
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
