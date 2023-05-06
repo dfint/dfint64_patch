@@ -8,5 +8,5 @@ common
     . db text
     .length = $ - .
     db 0
-    align 8
+    align 4
 }
