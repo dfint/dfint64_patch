@@ -18,7 +18,7 @@ flake8 = "^5.0.4"
 black = "^23.3.0"
 isort = "^5.11.5"
 hypothesis = "^6.75.9"
-coverage = "^7.2.5"
+coverage = "^7.2.7"
 mypy = "^1.2.0"
 
 [tool.poetry.scripts]
