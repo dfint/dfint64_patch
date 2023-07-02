@@ -19,7 +19,7 @@ black = "^23.3.0"
 isort = "^5.11.5"
 hypothesis = "^6.79.4"
 coverage = "^7.2.7"
-mypy = "^1.3.0"
+mypy = "^1.4.1"
 
 [tool.poetry.scripts]
 extract = "dfrus64.extract_strings.cli:main"
