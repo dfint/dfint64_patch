@@ -4,16 +4,16 @@ import click
 from loguru import logger
 from peclasses.portable_executable import PortableExecutable
 
-from dfrus64.backup import copy_source_file_context
-from dfrus64.binio import read_section_data
-from dfrus64.charmap.cli import patch_charmap
-from dfrus64.cross_references.cross_references_relative import (
+from dfint64_patch.backup import copy_source_file_context
+from dfint64_patch.binio import read_section_data
+from dfint64_patch.charmap.cli import patch_charmap
+from dfint64_patch.cross_references.cross_references_relative import (
     find_intersected_cross_references,
     find_relative_cross_references,
     invert_cross_reference_table,
 )
-from dfrus64.dictionary_loaders.csv_loader import load_translation_file
-from dfrus64.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
+from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
+from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
 def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: Optional[str]):

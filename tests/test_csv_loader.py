@@ -6,7 +6,7 @@ from typing import List, Tuple
 from hypothesis import example, given
 from hypothesis import strategies as st
 
-from dfrus64.dictionary_loaders.csv_loader import load_translation_file
+from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
 
 text_strategy = st.text(alphabet=string.printable).filter(lambda text: not ("\\r" in text or "\\t" in text))
 translation_strategy = text_strategy

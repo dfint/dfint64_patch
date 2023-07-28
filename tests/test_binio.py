@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from dfrus64.binio import read_bytes, write_dword, write_string
+from dfint64_patch.binio import read_bytes, write_dword, write_string
 
 
 def test_binio():

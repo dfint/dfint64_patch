@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from dfrus64.extract_strings.cli import extract_strings, main
-from dfrus64.extract_strings.from_raw_bytes import (
+from dfint64_patch.extract_strings.cli import extract_strings, main
+from dfint64_patch.extract_strings.from_raw_bytes import (
     check_string,
     extract_strings_from_raw_bytes,
 )

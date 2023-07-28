@@ -7,7 +7,7 @@ in the code section.
 
 from typing import Iterator, NamedTuple, Set, Tuple, Union
 
-from dfrus64.type_aliases import Offset, Rva
+from dfint64_patch.type_aliases import Offset, Rva
 
 forbidden: Set[int] = set(b"$^@")
 allowed: Set[int] = set()
