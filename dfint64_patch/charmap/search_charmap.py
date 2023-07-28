@@ -1,7 +1,7 @@
 from typing import Optional
 
-from dfrus64.binio import to_dword
-from dfrus64.type_aliases import Offset
+from dfint64_patch.binio import to_dword
+from dfint64_patch.type_aliases import Offset
 
 unicode_table_start = b"".join(
     to_dword(item) for item in [0x20, 0x263A, 0x263B, 0x2665, 0x2666, 0x2663, 0x2660, 0x2022]

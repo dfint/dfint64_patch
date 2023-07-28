@@ -1,8 +1,8 @@
-# DFRUS64
+# dfint64_patch
 
-[![Test](https://github.com/dfint/dfrus64/actions/workflows/test.yml/badge.svg)](https://github.com/dfint/dfrus64/actions/workflows/test.yml)
-[![Coverage Status](https://coveralls.io/repos/github/dfint/dfrus64/badge.svg)](https://coveralls.io/github/dfint/dfrus64)
-[![Maintainability](https://api.codeclimate.com/v1/badges/42d223b64187d6e7a05c/maintainability)](https://codeclimate.com/github/dfint/dfrus64/maintainability)
+[![Test](https://github.com/dfint/dfint64_patch/actions/workflows/test.yml/badge.svg)](https://github.com/dfint/dfint64_patch/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/dfint/dfint64_patch/badge.svg)](https://coveralls.io/github/dfint/dfint64_patch)
+[![Maintainability](https://api.codeclimate.com/v1/badges/42d223b64187d6e7a05c/maintainability)](https://codeclimate.com/github/dfint/dfint64_patch/maintainability)
 
 Text patcher for x64 bit version of the Dwarf Fortress game (work in progress).
 

@@ -3,8 +3,8 @@ import functools
 import unicodedata
 from typing import BinaryIO, Callable, Dict, Iterable, Mapping, Tuple, Union, cast
 
-from dfrus64.binio import write_dword, write_dwords
-from dfrus64.type_aliases import Offset
+from dfint64_patch.binio import write_dword, write_dwords
+from dfint64_patch.type_aliases import Offset
 
 
 def ord_utf16(c: str) -> int:

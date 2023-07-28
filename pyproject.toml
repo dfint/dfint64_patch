@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "dfrus64"
+name = "dfint64_patch"
 version = "0.0.1"
 description = "Text patcher for x64 bit version of the Dwarf Fortress game"
 authors = ["insolor <insolor@gmail.com>"]
@@ -22,9 +22,9 @@ coverage = "^7.2.7"
 mypy = "^1.4.1"
 
 [tool.poetry.scripts]
-extract = "dfrus64.extract_strings.cli:main"
-patch = "dfrus64.patch:main"
-patch_charmap = "dfrus64.charmap.cli:main"
+extract = "dfint64_patch.extract_strings.cli:main"
+patch = "dfint64_patch.patch:main"
+patch_charmap = "dfint64_patch.charmap.cli:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

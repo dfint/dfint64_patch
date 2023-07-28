@@ -7,7 +7,7 @@ coverage.xml
 venv/
 .venv/
 .pytest_cache/*
-dfrus64.egg-info/
+dfint64_patch.egg-info/
 dist/
 .hypothesis/
 *.exe
