@@ -6,7 +6,7 @@ authors = ["insolor <insolor@gmail.com>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.10"
 click = "^8.1.6"
 peclasses = { url = "https://github.com/dfint/peclasses/releases/download/0.4.0/peclasses-0.4.0-py3-none-any.whl" }
 loguru = "^0.7.0"
