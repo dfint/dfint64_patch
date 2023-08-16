@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, cast
+from typing import cast
 
 import click
 from loguru import logger
@@ -16,7 +16,7 @@ from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
 from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, str]], codepage: Optional[str]):
+def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]], codepage: str | None):
     if codepage is not None:
         patch_charmap(patched_file, codepage)
 
@@ -59,8 +59,8 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
             obj1_rva = object_rva_by_reference[ref1]
             obj2_rva = object_rva_by_reference[ref2]
             logger.info(
-                "0x{:x} (to 0x{:x} {!r}) / "
-                "0x{:x} (to 0x{:x} {!r})".format(ref1, obj1_rva, strings[obj1_rva], ref2, obj2_rva, strings[obj2_rva])
+                f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
+                f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})"
             )
 
         translation_dictionary = dict(translation_table)
@@ -80,7 +80,7 @@ def run(source_file: str, patched_file: str, translation_table: List[Tuple[str, 
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
 @click.option("--codepage", "codepage", help="Enable support of the given codepage by name", default=None)
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
-def main(source_file: str, patched_file: str, codepage: Optional[str], dictionary_file: str, cleanup: bool) -> None:
+def main(source_file: str, patched_file: str, codepage: str | None, dictionary_file: str, cleanup: bool) -> None:
     with copy_source_file_context(source_file, patched_file, cleanup):
         logger.info("Loading translation file...")
 

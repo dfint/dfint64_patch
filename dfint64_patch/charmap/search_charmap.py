@@ -1,5 +1,3 @@
-from typing import Optional
-
 from dfint64_patch.binio import to_dword
 from dfint64_patch.type_aliases import Offset
 
@@ -8,7 +6,7 @@ unicode_table_start = b"".join(
 )
 
 
-def search_charmap(bytes_block: bytes, offset: Offset = 0) -> Optional[int]:
+def search_charmap(bytes_block: bytes, offset: Offset = 0) -> int | None:
     view = memoryview(bytes_block)
 
     for i in range(len(view)):

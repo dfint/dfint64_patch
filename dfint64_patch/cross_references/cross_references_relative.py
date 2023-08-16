@@ -1,13 +1,13 @@
 from collections import defaultdict
+from collections.abc import Iterable, Iterator, Mapping
 from itertools import chain
-from typing import Iterable, Iterator, List, Mapping, Tuple
 
 from dfint64_patch.type_aliases import Rva
 
 
 def find_relative_cross_references(
     bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]
-) -> Mapping[Rva, List[Rva]]:
+) -> Mapping[Rva, list[Rva]]:
     """
     Analyse a block of bytes and try to find relative cross-references to the given objects' addresses
     :param bytes_block: bytes block to analyse
@@ -19,7 +19,7 @@ def find_relative_cross_references(
     view = memoryview(bytes_block)
     result = defaultdict(list)
 
-    if not isinstance(addresses, (range, dict)):
+    if not isinstance(addresses, range | dict):
         addresses = set(addresses)
 
     for i in range(len(bytes_block) - 3):
@@ -33,7 +33,7 @@ def find_relative_cross_references(
     return result
 
 
-def invert_cross_reference_table(cross_references: Mapping[Rva, List[Rva]]) -> Mapping[Rva, Rva]:
+def invert_cross_reference_table(cross_references: Mapping[Rva, list[Rva]]) -> Mapping[Rva, Rva]:
     """
     Invert mapping from {Destination Rva: list of cross reverences} to {cross reference: destination}
     :param cross_references:
@@ -47,7 +47,7 @@ def invert_cross_reference_table(cross_references: Mapping[Rva, List[Rva]]) -> M
     return result
 
 
-def find_intersected_cross_references(cross_references: Mapping[Rva, List[Rva]]) -> Iterator[Tuple[Rva, Rva]]:
+def find_intersected_cross_references(cross_references: Mapping[Rva, list[Rva]]) -> Iterator[tuple[Rva, Rva]]:
     """
     Find collisions of the references (i.e. when one supposed reference intersects with another one)
     :param cross_references: mapping of the cross-references

@@ -1,6 +1,11 @@
 import pytest
 
-from dfint64_patch.charmap.patch_charmap import Encoder, get_codepages, get_encoder, ord_utf16
+from dfint64_patch.charmap.patch_charmap import (
+    Encoder,
+    get_codepages,
+    get_encoder,
+    ord_utf16,
+)
 
 
 @pytest.mark.parametrize(

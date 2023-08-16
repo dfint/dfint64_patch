@@ -1,7 +1,8 @@
 import operator
 import sys
+from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import BinaryIO, Iterator, Optional, cast
+from typing import BinaryIO, cast
 
 import click
 from loguru import logger
@@ -46,7 +47,7 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
 
 
 @contextmanager
-def maybe_open(file_name: Optional[str]):
+def maybe_open(file_name: str | None):
     """
     Open a file if the name is provided, and close it on exit from with-block,
     or provide stdout as a file object, if the file_name parameter is None

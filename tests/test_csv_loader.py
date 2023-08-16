@@ -1,7 +1,6 @@
 import csv
 import io
 import string
-from typing import List, Tuple
 
 from hypothesis import example, given
 from hypothesis import strategies as st
@@ -14,7 +13,7 @@ translation_strategy = text_strategy
 
 @given(st.lists(st.tuples(text_strategy, translation_strategy)))
 @example([("\tsome\rtext", "\tкакой-то\rтекст")])
-def test_load_translation_file(dictionary: List[Tuple[str, str]]):
+def test_load_translation_file(dictionary: list[tuple[str, str]]):
     file = io.StringIO()
     csv_writer = csv.writer(file, dialect="unix")
 

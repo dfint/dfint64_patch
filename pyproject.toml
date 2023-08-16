@@ -20,6 +20,8 @@ isort = "^5.11.5"
 hypothesis = "^6.79.4"
 coverage = "^7.2.7"
 mypy = "^1.4.1"
+refurb = "^1.20.0"
+ruff = "^0.0.284"
 
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
@@ -38,3 +40,10 @@ profile = "black"
 
 [tool.mypy]
 ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 120
+select = ["E", "F", "UP"]
+ignore = ["UP015"]
+unfixable = ["F401"]
+target-version = "py310"

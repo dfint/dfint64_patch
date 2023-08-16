@@ -5,12 +5,13 @@ So it is only possible to find strings by linear search in the data section, and
 in the code section.
 """
 
-from typing import Iterator, NamedTuple, Set, Tuple, Union
+from collections.abc import Iterator
+from typing import NamedTuple
 
 from dfint64_patch.type_aliases import Offset, Rva
 
-forbidden: Set[int] = set(b"$^@")
-allowed: Set[int] = set()
+forbidden: set[int] = set(b"$^@")
+allowed: set[int] = set()
 
 
 def is_allowed(x: int) -> bool:
@@ -26,7 +27,7 @@ def possible_to_decode(c: bytes, encoding) -> bool:
         return True
 
 
-def check_string(buf: Union[bytes, memoryview], encoding: str) -> Tuple[int, int]:
+def check_string(buf: bytes | memoryview, encoding: str) -> tuple[int, int]:
     """
     Try to decode bytes as a string in the given encoding
     :param buf: byte buffer

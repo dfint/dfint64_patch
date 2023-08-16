@@ -1,8 +1,9 @@
 import csv
-from typing import Iterator, TextIO, Tuple
+from collections.abc import Iterator
+from typing import TextIO
 
 
-def load_translation_file(fn: TextIO) -> Iterator[Tuple[str, str]]:
+def load_translation_file(fn: TextIO) -> Iterator[tuple[str, str]]:
     def unescape(x):
         return x.replace("\\r", "\r").replace("\\t", "\t")
 

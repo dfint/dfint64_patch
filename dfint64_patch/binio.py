@@ -1,4 +1,5 @@
-from typing import BinaryIO, Iterable, cast
+from collections.abc import Iterable
+from typing import BinaryIO, cast
 
 from peclasses.section_table import Section
 

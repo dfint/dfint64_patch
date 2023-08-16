@@ -1,7 +1,8 @@
 import codecs
 import functools
 import unicodedata
-from typing import BinaryIO, Callable, Dict, Iterable, Mapping, Tuple, Union, cast
+from collections.abc import Callable, Iterable, Mapping
+from typing import BinaryIO, cast
 
 from dfint64_patch.binio import write_dword, write_dwords
 from dfint64_patch.type_aliases import Offset
@@ -15,7 +16,7 @@ def chr_utf16(value: int) -> str:
     return value.to_bytes(2, "little").decode("utf-16")
 
 
-_additional_codepages: Mapping[str, Mapping[int, Union[int, Iterable[int]]]] = {
+_additional_codepages: Mapping[str, Mapping[int, int | Iterable[int]]] = {
     "cp437": dict(),  # Stub entry, so that dfrus.py do not complain that cp437 is not implemented
     "cp1251": {
         0xC0: range(ord_utf16("А"), ord_utf16("Я") + 1),
@@ -60,13 +61,13 @@ def generate_charmap_table_patch(enc1: str, enc2: str) -> Mapping[int, int]:
     )
 
 
-@functools.lru_cache(maxsize=None)
-def get_codepages() -> Mapping[str, Mapping[int, Union[int, Iterable[int]]]]:
-    codepages: Dict[str, Mapping[int, Union[int, Iterable[int]]]] = dict()
+@functools.cache
+def get_codepages() -> Mapping[str, Mapping[int, int | Iterable[int]]]:
+    codepages: dict[str, Mapping[int, int | Iterable[int]]] = dict()
 
     for i in range(700, 1253):
         try:
-            codepage_code = "cp{}".format(i)
+            codepage_code = f"cp{i}"
             codepages[codepage_code] = generate_charmap_table_patch("cp437", codepage_code)
         except LookupError:
             pass
@@ -97,7 +98,7 @@ class Encoder:
                 for i, char in enumerate(value):
                     self.lookup_table[chr_utf16(char)] = char_code + i
 
-    def encode(self, input_string: str, errors="strict") -> Tuple[bytes, int]:
+    def encode(self, input_string: str, errors="strict") -> tuple[bytes, int]:
         array = []
         for char in unicodedata.normalize("NFC", input_string):
             if char in self.lookup_table:
@@ -111,7 +112,7 @@ class Encoder:
 _encoders = {"viscii": Encoder(_additional_codepages["viscii"])}
 
 
-def get_encoder(encoding: str) -> Callable[[str], Tuple[bytes, int]]:
+def get_encoder(encoding: str) -> Callable[[str], tuple[bytes, int]]:
     try:
         return codecs.getencoder(encoding)
     except LookupError as ex:

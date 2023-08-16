@@ -24,12 +24,7 @@ def fix_unicode_table(pe_file: BinaryIO, pe: PortableExecutable, data_section, i
 
     unicode_table_offset = pe.section_table.rva_to_offset(unicode_table_rva)
 
-    logger.info(
-        "Found at address 0x{:x} (offset 0x{:x})".format(
-            unicode_table_rva + image_base,
-            unicode_table_offset,
-        )
-    )
+    logger.info(f"Found at address 0x{unicode_table_rva + image_base:x} (offset 0x{unicode_table_offset:x})")
 
     try:
         logger.info(f"Patching unicode table to {codepage}...")
