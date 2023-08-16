@@ -2,6 +2,7 @@ import codecs
 import functools
 import unicodedata
 from collections.abc import Callable, Iterable, Mapping
+from contextlib import suppress
 from typing import BinaryIO, cast
 
 from dfint64_patch.binio import write_dword, write_dwords
@@ -17,7 +18,7 @@ def chr_utf16(value: int) -> str:
 
 
 _additional_codepages: Mapping[str, Mapping[int, int | Iterable[int]]] = {
-    "cp437": dict(),  # Stub entry, so that dfrus.py do not complain that cp437 is not implemented
+    "cp437": {},  # Stub entry, so that dfrus.py do not complain that cp437 is not implemented
     "cp1251": {
         0xC0: range(ord_utf16("А"), ord_utf16("Я") + 1),
         0xE0: range(ord_utf16("а"), ord_utf16("я") + 1),
@@ -63,14 +64,12 @@ def generate_charmap_table_patch(enc1: str, enc2: str) -> Mapping[int, int]:
 
 @functools.cache
 def get_codepages() -> Mapping[str, Mapping[int, int | Iterable[int]]]:
-    codepages: dict[str, Mapping[int, int | Iterable[int]]] = dict()
+    codepages: dict[str, Mapping[int, int | Iterable[int]]] = {}
 
     for i in range(700, 1253):
-        try:
+        with suppress(LookupError):
             codepage_code = f"cp{i}"
             codepages[codepage_code] = generate_charmap_table_patch("cp437", codepage_code)
-        except LookupError:
-            pass
 
     codepages.update(_additional_codepages)
 
@@ -89,7 +88,7 @@ def patch_unicode_table(file: BinaryIO, offset: Offset, codepage: str):
 
 class Encoder:
     def __init__(self, codepage_data):
-        self.lookup_table = dict()
+        self.lookup_table = {}
 
         for char_code, value in codepage_data.items():
             if isinstance(value, int):

@@ -39,7 +39,7 @@ def invert_cross_reference_table(cross_references: Mapping[Rva, list[Rva]]) -> M
     :param cross_references:
     :return: Mapping[source: Rva, destination: Rva] - inverted mapping
     """
-    result = dict()
+    result = {}
     for object_rva, references in cross_references.items():
         for ref in references:
             result[ref] = object_rva

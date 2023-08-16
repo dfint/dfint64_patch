@@ -47,7 +47,7 @@ def test_check_string(test_data, encoding, expected):
             ),
             {7: "abc", 12: "qwerty qwerty", 28: "xyz"},
         ),
-        (dict(bytes_block=b"12345\xFF\0", encoding="utf-8"), dict()),  # b"\xFF" cannot be decoded from utf-8 encoding
+        (dict(bytes_block=b"12345\xFF\0", encoding="utf-8"), {}),  # b"\xFF" cannot be decoded from utf-8 encoding
     ],
 )
 def test_extract_strings_from_raw_bytes(test_data, expected):
@@ -65,10 +65,8 @@ def test_extract_strings_cli_2():
     exe_file_path = Path(__file__).parent / "test64.exe"
     with tempfile.TemporaryDirectory() as temp_dir:
         file_name = Path(temp_dir) / "string_dump.txt"
-        try:
+        with contextlib.suppress(SystemExit):
             main([str(exe_file_path), str(file_name)])
-        except SystemExit:
-            pass
 
         with open(file_name) as file:
             strings = [line.rstrip() for line in file.readlines()]
@@ -81,10 +79,8 @@ def test_extract_strings_cli_3():
     stdout = io.StringIO()
 
     with contextlib.redirect_stdout(stdout):
-        try:
+        with contextlib.suppress(SystemExit):
             main([str(exe_file_path)])
-        except SystemExit:
-            pass
 
         strings = stdout.getvalue().splitlines()
         assert "Hello, World!" in strings

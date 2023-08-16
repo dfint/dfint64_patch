@@ -1,5 +1,5 @@
-import os
 from contextlib import contextmanager
+from pathlib import Path
 from shutil import copy
 
 from loguru import logger
@@ -21,5 +21,5 @@ def copy_source_file_context(src, dest, cleanup):
     except Exception as ex:
         if cleanup:
             logger.info(f"Removing '{dest}'")
-            os.remove(dest)
+            Path(dest).unlink()
         raise ex
