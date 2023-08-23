@@ -364,8 +364,9 @@ files = [
 ]
 
 [package.source]
-type = "url"
-url = "https://github.com/dfint/peclasses/releases/download/0.4.0/peclasses-0.4.0-py3-none-any.whl"
+type = "legacy"
+url = "https://dfint.github.io/pypi-index"
+reference = "dfint"
 
 [[package]]
 name = "platformdirs"
@@ -550,4 +551,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "99888fae56f01cdfff1038cb2bca6516f2f78536b245b582a82f02c306894b9b"
+content-hash = "0c97bd67393f22f354702da9865489db4b88c26451cefc763d0b7ed1e6a189b9"
