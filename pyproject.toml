@@ -7,7 +7,7 @@ license = "MIT License"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-click = "^8.1.6"
+click = "^8.1.7"
 loguru = "^0.7.0"
 peclasses = {version = "^0.4.0", source = "dfint"}
 
