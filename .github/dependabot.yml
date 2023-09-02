@@ -7,11 +7,13 @@ updates:
     groups:
       dev-dependencies:
         patterns:
-          - "pytest*"
-          - "flake8*"
           - "black"
-          - "isort"
           - "coverage"
+          - "flake8*"
+          - "hypothesis"
+          - "isort"
+          - "mypy"
+          - "pytest*"
           - "refurb"
           - "ruff"
 
