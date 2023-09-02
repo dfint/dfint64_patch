@@ -1,11 +1,25 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/" # Location of package manifests
+    directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      dev-dependencies:
+        patterns:
+          - "pytest*"
+          - "flake8*"
+          - "black"
+          - "isort"
+          - "coverage"
+          - "refurb"
+          - "ruff"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      all:
+        patterns:
+          - "*"
