@@ -22,6 +22,6 @@ updates:
     schedule:
       interval: "monthly"
     groups:
-      all:
+      github-actions:
         patterns:
           - "*"
