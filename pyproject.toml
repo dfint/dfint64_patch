@@ -12,16 +12,16 @@ loguru = "^0.7.2"
 peclasses = {version = "^0.4.0", source = "dfint"}
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
+pytest = "^7.4.4"
 pytest-cov = "^4.1.0"
 flake8 = "^6.1.0"
-black = "^23.11.0"
-isort = "^5.11.5"
-hypothesis = "^6.91.0"
-coverage = "^7.3.2"
-mypy = "^1.7.1"
-refurb = "^1.24.0"
-ruff = "^0.1.6"
+black = "^23.12.1"
+isort = "^5.13.2"
+hypothesis = "^6.92.2"
+coverage = "^7.4.0"
+mypy = "^1.8.0"
+refurb = "^1.26.0"
+ruff = "^0.1.9"
 
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
