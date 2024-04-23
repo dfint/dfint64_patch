@@ -15,7 +15,7 @@ allowed: set[int] = set()
 
 
 def is_allowed(x: int) -> bool:
-    return x in allowed or (ord(" ") <= x and x not in forbidden)
+    return x in allowed or (ord(" ") <= x < 128 and x not in forbidden)
 
 
 def possible_to_decode(c: bytes, encoding) -> bool:
