@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dfint64_patch"
-version = "0.0.1"
+version = "0.1.0"
 description = "Text patcher for x64 bit version of the Dwarf Fortress game"
 authors = ["insolor <insolor@gmail.com>"]
 license = "MIT License"
