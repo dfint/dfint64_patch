@@ -19,7 +19,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
         (b"12345\xff\0", "utf-8", (0, 0)),
     ],
 )
-def test_check_string(test_data, encoding, expected):
+def test_check_string(test_data: bytes, encoding: str, expected: tuple[int, int]):
     assert check_string(test_data, encoding) == expected
 
 
@@ -56,7 +56,7 @@ def test_extract_strings_from_raw_bytes(test_data, expected):
 
 def test_extract_string_cli():
     exe_file_path = Path(__file__).parent / "test64.exe"
-    with open(exe_file_path, "rb") as pe_file:
+    with Path(exe_file_path).open("rb") as pe_file:
         strings = [x.string for x in extract_strings(pe_file)]
         assert "Hello, World!" in strings
 
@@ -68,7 +68,7 @@ def test_extract_strings_cli_2():
         with contextlib.suppress(SystemExit):
             main([str(exe_file_path), str(file_name)])
 
-        with open(file_name) as file:
+        with Path(file_name).open() as file:
             strings = [line.rstrip() for line in file.readlines()]
 
         assert "Hello, World!" in strings

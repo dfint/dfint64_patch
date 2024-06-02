@@ -17,7 +17,7 @@ def test_load_translation_file(dictionary: list[tuple[str, str]]):
     file = io.StringIO()
     csv_writer = csv.writer(file, dialect="unix")
 
-    def escape(x: str):
+    def escape(x: str) -> str:
         return x.replace("\r", "\\r").replace("\t", "\\t")
 
     for text, translation in dictionary:

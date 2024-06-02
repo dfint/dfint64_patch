@@ -27,7 +27,6 @@ from dfint64_patch.cross_references.cross_references_relative import (
             ),
             {0x11004: [0x10000]},
         ),
-        # TODO: more tests
     ],
 )
 def test_find_relative_cross_references(test_data, expected):
