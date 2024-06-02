@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import cast
 
 import click
@@ -6,7 +7,6 @@ from peclasses.portable_executable import PortableExecutable
 
 from dfint64_patch.backup import copy_source_file_context
 from dfint64_patch.binio import read_section_data
-from dfint64_patch.charmap.cli import patch_charmap
 from dfint64_patch.cross_references.cross_references_relative import (
     find_intersected_cross_references,
     find_relative_cross_references,
@@ -16,11 +16,8 @@ from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
 from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]], codepage: str | None) -> None:
-    if codepage is not None:
-        patch_charmap(patched_file, codepage)
-
-    with open(patched_file, "r+b") as pe_file:
+def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]]) -> None:
+    with Path(patched_file).open("r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
         sections = pe.section_table
@@ -78,18 +75,17 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
 )
 @click.argument("patched_file", default="Dwarf Fortress Patched.exe")
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
-@click.option("--codepage", "codepage", help="Enable support of the given codepage by name", default=None)
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
-def main(source_file: str, patched_file: str, codepage: str | None, dictionary_file: str, cleanup: bool) -> None:
+def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:
     with copy_source_file_context(source_file, patched_file, cleanup):
         logger.info("Loading translation file...")
 
-        with open(dictionary_file, encoding="utf-8") as trans:
+        with Path(dictionary_file).open(encoding="utf-8") as trans:
             translation_table = list(load_translation_file(trans))
 
         # TODO: split translation table for debugging
 
-        run(source_file, patched_file, translation_table, codepage)
+        run(source_file, patched_file, translation_table)
 
 
 if __name__ == "__main__":
