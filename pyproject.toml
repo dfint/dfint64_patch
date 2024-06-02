@@ -47,8 +47,28 @@ profile = "black"
 ignore_missing_imports = true
 
 [tool.ruff]
-line-length = 120
-select = ["E", "F", "UP"]
-ignore = ["UP015"]
-unfixable = ["F401"]
 target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "T201",  # `print` found
+    "S101",  # Use of assert detected
+    "ANN101",  # Missing type annotation for self in method
+    "C408",  # Unnecessary `dict` call (rewrite as a literal)
+    "D",
+    # "D100",  # Missing docstring in public module
+    # "D104",  # Missing docstring in public package
+    # "D105",  # Missing docstring in magic method
+    # "D200",  # One-line docstring should fit on one line
+    # "D212",  # Multi-line docstring summary should start at the first line
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",  # Don't warn about using of asserts in tests
+    "ANN201",  # Ignore "Missing return type annotation for public function", tests don't return anything
+    "D",  # Don't warn about missing documentation in tests
+    "RUF001",  # String contains ambiguous {}. Did you mean {}?
+]
