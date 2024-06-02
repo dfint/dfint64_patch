@@ -50,7 +50,7 @@ def test_check_string(test_data: bytes, encoding: str, expected: tuple[int, int]
         (dict(bytes_block=b"12345\xff\0", encoding="utf-8"), {}),  # b"\xFF" cannot be decoded from utf-8 encoding
     ],
 )
-def test_extract_strings_from_raw_bytes(test_data, expected):
+def test_extract_strings_from_raw_bytes(test_data: dict, expected: dict):
     assert dict(extract_strings_from_raw_bytes(**test_data)) == expected
 
 

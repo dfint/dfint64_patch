@@ -64,7 +64,9 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         for string in strings.values():
             translation = translation_dictionary.get(string)
             if translation:
-                pass
+                ...  # work in progress...
+
+        print(source_file)
 
 
 @click.command()
@@ -76,14 +78,14 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
 @click.argument("patched_file", default="Dwarf Fortress Patched.exe")
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
-def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:
+def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:  # noqa: FBT001
     with copy_source_file_context(source_file, patched_file, cleanup):
         logger.info("Loading translation file...")
 
         with Path(dictionary_file).open(encoding="utf-8") as trans:
             translation_table = list(load_translation_file(trans))
 
-        # TODO: split translation table for debugging
+        print(source_file)  # TODO: split translation table for debugging
 
         run(source_file, patched_file, translation_table)
 
