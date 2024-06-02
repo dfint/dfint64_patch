@@ -6,7 +6,7 @@ from peclasses.section_table import Section
 from dfint64_patch.type_aliases import Offset
 
 
-def read_bytes(file_object: BinaryIO, offset: Offset, count=1) -> bytes:
+def read_bytes(file_object: BinaryIO, offset: Offset, count: int = 1) -> bytes:
     file_object.seek(offset)
     return file_object.read(count)
 
@@ -20,11 +20,17 @@ def write_dwords(file_object: BinaryIO, dwords: Iterable[int]) -> None:
         write_dword(file_object, x)
 
 
-def to_dword(number: int, signed: bool = False):
+def to_dword(number: int, *, signed: bool = False) -> bytes:
     return number.to_bytes(length=4, byteorder="little", signed=signed)
 
 
-def write_string(file_object: BinaryIO, s: str, offset: Offset = None, new_len: int | None = None, encoding: str | None = None) -> None:
+def write_string(
+    file_object: BinaryIO,
+    s: str,
+    offset: Offset = None,
+    new_len: int | None = None,
+    encoding: str | None = None,
+) -> None:
     if offset is not None:
         file_object.seek(offset)
 
