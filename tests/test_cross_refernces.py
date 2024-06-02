@@ -35,7 +35,8 @@ def test_find_relative_cross_references(test_data, expected):
 
 
 @pytest.mark.parametrize(
-    ("test_data", "expected"), [({111: [222, 333, 444], 555: [0]}, {222: 111, 333: 111, 444: 111, 0: 555})],
+    ("test_data", "expected"),
+    [({111: [222, 333, 444], 555: [0]}, {222: 111, 333: 111, 444: 111, 0: 555})],
 )
 def test_invert_cross_reference_table(test_data, expected):
     assert invert_cross_reference_table(test_data) == expected

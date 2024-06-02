@@ -13,12 +13,14 @@ from dfint64_patch.type_aliases import Offset, Rva
 forbidden: set[int] = set(b"$^@")
 allowed: set[int] = set()
 
+ASCII_MAX_CODE = 127
+
 
 def is_allowed(x: int) -> bool:
-    return x in allowed or (ord(" ") <= x < 128 and x not in forbidden)
+    return x in allowed or (ord(" ") <= x <= ASCII_MAX_CODE and x not in forbidden)
 
 
-def possible_to_decode(c: bytes, encoding) -> bool:
+def possible_to_decode(c: bytes, encoding: str) -> bool:
     try:
         c.decode(encoding=encoding)
     except UnicodeDecodeError:
@@ -45,7 +47,8 @@ def check_string(buf: bytes | memoryview, encoding: str) -> tuple[int, int]:
         current_byte = bytes(buf[i : i + 1])
         if not is_allowed(c) or not possible_to_decode(current_byte, encoding):
             break
-        elif current_byte.isalpha():
+
+        if current_byte.isalpha():
             number_of_letters += 1
 
     return string_length, number_of_letters
@@ -57,7 +60,10 @@ class ExtractedStringInfo(NamedTuple):
 
 
 def extract_strings_from_raw_bytes(
-    bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding="cp437",
+    bytes_block: bytes,
+    base_address: Rva = 0,
+    alignment: int = 4,
+    encoding: str = "cp437",
 ) -> Iterator[ExtractedStringInfo]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block
