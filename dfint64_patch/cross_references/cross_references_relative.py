@@ -4,9 +4,13 @@ from itertools import chain
 
 from dfint64_patch.type_aliases import Rva
 
+REFERENCE_SIZE = 4
+
 
 def find_relative_cross_references(
-    bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva],
+    bytes_block: bytes,
+    base_address: Rva,
+    addresses: Iterable[Rva],
 ) -> Mapping[Rva, list[Rva]]:
     """
     Analyse a block of bytes and try to find relative cross-references to the given objects' addresses
@@ -57,6 +61,6 @@ def find_intersected_cross_references(cross_references: Mapping[Rva, list[Rva]])
 
     for i, item in enumerate(references):
         j = i + 1
-        while j < len(references) and references[j] - item < 4:
+        while j < len(references) and references[j] - item < REFERENCE_SIZE:
             yield item, references[j]
             j += 1
