@@ -1,8 +1,9 @@
 import operator
 import sys
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
-from typing import BinaryIO, cast
+from pathlib import Path
+from typing import BinaryIO, TextIO, cast
 
 import click
 from loguru import logger
@@ -47,14 +48,14 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
 
 
 @contextmanager
-def maybe_open(file_name: str | None):
+def maybe_open(file_name: str | None) -> Generator[TextIO]:
     """
     Open a file if the name is provided, and close it on exit from with-block,
     or provide stdout as a file object, if the file_name parameter is None
     :param file_name: file name or None
-    :return:
+    :return: file object
     """
-    file_object = sys.stdout if file_name is None else open(file_name, "w")
+    file_object = sys.stdout if file_name is None else Path(file_name).open("w")  # noqa: SIM115
 
     try:
         yield file_object
@@ -66,8 +67,8 @@ def maybe_open(file_name: str | None):
 @click.command()
 @click.argument("file_name")
 @click.argument("out_file", default=None, required=False)
-def main(file_name, out_file) -> None:
-    with open(file_name, "rb") as pe_file, maybe_open(out_file) as out_file_object:
+def main(file_name: str, out_file: str) -> None:
+    with Path(file_name).open("rb") as pe_file, maybe_open(out_file) as out_file_object:
         for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)
             logger.info("0x{:X} {!r}", address, string, file=out_file_object)
