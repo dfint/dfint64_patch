@@ -16,7 +16,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
     "test_data,encoding,expected",
     [
         (b"12345\0", "cp437", (5, 0)),
-        (b"12345\xFF\0", "utf-8", (0, 0)),
+        (b"12345\xff\0", "utf-8", (0, 0)),
     ],
 )
 def test_check_string(test_data, encoding, expected):
@@ -47,7 +47,7 @@ def test_check_string(test_data, encoding, expected):
             ),
             {7: "abc", 12: "qwerty qwerty", 28: "xyz"},
         ),
-        (dict(bytes_block=b"12345\xFF\0", encoding="utf-8"), {}),  # b"\xFF" cannot be decoded from utf-8 encoding
+        (dict(bytes_block=b"12345\xff\0", encoding="utf-8"), {}),  # b"\xFF" cannot be decoded from utf-8 encoding
     ],
 )
 def test_extract_strings_from_raw_bytes(test_data, expected):
