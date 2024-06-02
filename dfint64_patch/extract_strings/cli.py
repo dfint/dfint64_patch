@@ -54,10 +54,7 @@ def maybe_open(file_name: str | None):
     :param file_name: file name or None
     :return:
     """
-    if file_name is None:
-        file_object = sys.stdout
-    else:
-        file_object = open(file_name, "w")
+    file_object = sys.stdout if file_name is None else open(file_name, "w")
 
     try:
         yield file_object
@@ -69,7 +66,7 @@ def maybe_open(file_name: str | None):
 @click.command()
 @click.argument("file_name")
 @click.argument("out_file", default=None, required=False)
-def main(file_name, out_file):
+def main(file_name, out_file) -> None:
     with open(file_name, "rb") as pe_file, maybe_open(out_file) as out_file_object:
         for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)

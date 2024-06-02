@@ -13,7 +13,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
 
 
 @pytest.mark.parametrize(
-    "test_data,encoding,expected",
+    ("test_data", "encoding", "expected"),
     [
         (b"12345\0", "cp437", (5, 0)),
         (b"12345\xff\0", "utf-8", (0, 0)),
@@ -24,7 +24,7 @@ def test_check_string(test_data, encoding, expected):
 
 
 @pytest.mark.parametrize(
-    "test_data,expected",
+    ("test_data", "expected"),
     [
         (
             dict(
@@ -57,7 +57,7 @@ def test_extract_strings_from_raw_bytes(test_data, expected):
 def test_extract_string_cli():
     exe_file_path = Path(__file__).parent / "test64.exe"
     with open(exe_file_path, "rb") as pe_file:
-        strings = list(map(lambda x: x.string, extract_strings(pe_file)))
+        strings = [x.string for x in extract_strings(pe_file)]
         assert "Hello, World!" in strings
 
 

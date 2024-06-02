@@ -16,7 +16,7 @@ from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
 from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
 
 
-def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]], codepage: str | None):
+def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]], codepage: str | None) -> None:
     if codepage is not None:
         patch_charmap(patched_file, codepage)
 
@@ -64,7 +64,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
             )
 
         translation_dictionary = dict(translation_table)
-        for string_rva, string in strings.items():
+        for string in strings.values():
             translation = translation_dictionary.get(string)
             if translation:
                 pass
