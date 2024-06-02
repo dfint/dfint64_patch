@@ -34,7 +34,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
             extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
                 base_address=cast(int, data_section.virtual_address) + image_base,
-            )
+            ),
         )
 
         logger.info("Found", len(strings), "string-like objects")
@@ -60,7 +60,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
             obj2_rva = object_rva_by_reference[ref2]
             logger.info(
                 f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
-                f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})"
+                f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})",
             )
 
         translation_dictionary = dict(translation_table)

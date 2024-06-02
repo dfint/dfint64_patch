@@ -57,7 +57,7 @@ class ExtractedStringInfo(NamedTuple):
 
 
 def extract_strings_from_raw_bytes(
-    bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding="cp437"
+    bytes_block: bytes, base_address: Rva = 0, alignment=4, encoding="cp437",
 ) -> Iterator[ExtractedStringInfo]:
     """
     Extract all objects which are seem to be text strings from a raw bytes block

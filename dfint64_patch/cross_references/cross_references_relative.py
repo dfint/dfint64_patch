@@ -6,7 +6,7 @@ from dfint64_patch.type_aliases import Rva
 
 
 def find_relative_cross_references(
-    bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva]
+    bytes_block: bytes, base_address: Rva, addresses: Iterable[Rva],
 ) -> Mapping[Rva, list[Rva]]:
     """
     Analyse a block of bytes and try to find relative cross-references to the given objects' addresses

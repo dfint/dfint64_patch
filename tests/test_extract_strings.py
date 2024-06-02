@@ -32,7 +32,7 @@ def test_check_string(test_data, encoding, expected):
                 + b"a"  # b"a" must be ignored because it is not aligned properly
                 + b"bc".ljust(4, b"\0")
                 + b"qwerty qwerty".ljust(16, b"\0")
-                + b"xyz\0"
+                + b"xyz\0",
             ),
             {8: "bc", 12: "qwerty qwerty", 28: "xyz"},
         ),

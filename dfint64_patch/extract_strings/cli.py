@@ -31,7 +31,7 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
         extract_strings_from_raw_bytes(
             read_section_data(pe_file, string_section),
             base_address=cast(int, string_section.virtual_address) + image_base,
-        )
+        ),
     )
 
     cross_references = find_relative_cross_references(
