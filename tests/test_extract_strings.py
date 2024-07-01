@@ -69,7 +69,7 @@ def test_extract_strings_cli_2():
             main([str(exe_file_path), str(file_name)])
 
         with Path(file_name).open() as file:
-            strings = [line.rstrip() for line in file.readlines()]
+            strings = [line.rstrip() for line in file]
 
         assert "Hello, World!" in strings
 
