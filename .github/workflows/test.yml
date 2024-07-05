@@ -43,7 +43,7 @@ jobs:
       run: poetry run ruff check
 
     - name: Check with mypy
-      run: poetry run mypy --install-types --non-interactive
+      run: poetry run mypy --non-interactive
 
     - name: Test with pytest
       run: |
