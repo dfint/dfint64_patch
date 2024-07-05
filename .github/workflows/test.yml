@@ -42,6 +42,9 @@ jobs:
     - name: Lint with ruff
       run: poetry run ruff check
 
+    - name: Check with mypy
+      run: poetry run mypy --install-types --non-interactive
+
     - name: Test with pytest
       run: |
         poetry run pytest --cov=./
