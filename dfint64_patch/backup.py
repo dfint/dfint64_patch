@@ -3,14 +3,15 @@ from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
 from shutil import copy
+from typing import TypeVar
 
 from loguru import logger
 
+T = TypeVar("T", bound=str | PathLike)
+
 
 @contextmanager
-def copy_source_file_context(
-    src: PathLike[str], dest: PathLike[str], *, cleanup: bool,
-) -> Generator[PathLike[str], None, None]:
+def copy_source_file_context(src: str | PathLike, dest: T, *, cleanup: bool) -> Generator[T, None, None]:
     """
     Context manager to backup file and restore it on exit (if needed)
     """
