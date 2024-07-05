@@ -27,7 +27,7 @@ def to_dword(number: int, *, signed: bool = False) -> bytes:
 def write_string(
     file_object: BinaryIO,
     s: str,
-    offset: Offset = None,
+    offset: Offset | None = None,
     new_len: int | None = None,
     encoding: str | None = None,
 ) -> None:

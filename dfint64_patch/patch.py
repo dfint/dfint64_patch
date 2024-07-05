@@ -79,7 +79,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
 def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:  # noqa: FBT001
-    with copy_source_file_context(source_file, patched_file, cleanup):
+    with copy_source_file_context(source_file, patched_file, cleanup=cleanup):
         logger.info("Loading translation file...")
 
         with Path(dictionary_file).open(encoding="utf-8") as trans:

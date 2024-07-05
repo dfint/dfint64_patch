@@ -48,7 +48,7 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
 
 
 @contextmanager
-def maybe_open(file_name: str | None) -> Generator[TextIO]:
+def maybe_open(file_name: str | None) -> Generator[TextIO, None, None]:
     """
     Open a file if the name is provided, and close it on exit from with-block,
     or provide stdout as a file object, if the file_name parameter is None
