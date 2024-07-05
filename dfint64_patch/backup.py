@@ -8,7 +8,9 @@ from loguru import logger
 
 
 @contextmanager
-def copy_source_file_context(src: PathLike[str], dest: PathLike[str], *, cleanup: bool) -> Generator[PathLike[str]]:
+def copy_source_file_context(
+    src: PathLike[str], dest: PathLike[str], *, cleanup: bool,
+) -> Generator[PathLike[str], None, None]:
     """
     Context manager to backup file and restore it on exit (if needed)
     """
