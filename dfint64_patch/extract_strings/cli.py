@@ -28,18 +28,17 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
     string_section = sections[1]
 
     image_base = pe.optional_header.image_base
-    base_address = Rva(cast(int, code_section.virtual_address) + image_base)
 
     strings = list(
         extract_strings_from_raw_bytes(
             read_section_data(pe_file, string_section),
-            base_address=base_address,
+            base_address=Rva(cast(int, string_section.virtual_address) + image_base),
         ),
     )
 
     cross_references = find_relative_cross_references(
         read_section_data(pe_file, code_section),
-        base_address=base_address,
+        base_address=Rva(cast(int, code_section.virtual_address) + image_base),
         addresses=map(operator.itemgetter(0), strings),
     )
 
