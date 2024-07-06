@@ -10,3 +10,8 @@ common
     db 0
     align 4
 }
+
+macro writeln hOut, text, text_length {
+    invoke WriteConsole, [hOut], text, text_length, 0, 0
+    invoke WriteConsole, [hOut], endl, endl.length, 0, 0
+}
