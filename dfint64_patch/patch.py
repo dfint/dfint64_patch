@@ -17,7 +17,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_ra
 from dfint64_patch.type_aliases import Rva
 
 
-def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]]) -> None:
+def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: str) -> None:
     with Path(patched_file).open("r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
@@ -65,9 +65,12 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         for string in strings.values():
             translation = translation_dictionary.get(string)
             if translation:
-                ...  # work in progress...
-
-        print(source_file)
+                if len(translation) <= len(string):
+                    encoded_translation = translation.encode(encoding).ljust(len(string) + 1, b"\x00")
+                    pe_file.write(encoded_translation)
+                else:
+                    # TODO: implement this case
+                    logger.warning(f"Translation for string {string!r} is longer than original one ({translation!r})")
 
 
 @click.command()
@@ -78,8 +81,9 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
 )
 @click.argument("patched_file", default="Dwarf Fortress Patched.exe")
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
+@click.option("--encoding", "encoding", help="Encoding for the translation", default="cp437")
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
-def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:  # noqa: FBT001
+def main(source_file: str, patched_file: str, dictionary_file: str, encoding: str, cleanup: bool) -> None:  # noqa: FBT001
     with copy_source_file_context(source_file, patched_file, cleanup=cleanup):
         logger.info("Loading translation file...")
 
@@ -88,7 +92,7 @@ def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: boo
 
         print(source_file)  # TODO: split translation table for debugging
 
-        run(source_file, patched_file, translation_table)
+        run(patched_file, translation_table, encoding)
 
 
 if __name__ == "__main__":
