@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import BinaryIO, cast
+from typing import BinaryIO
 
 from peclasses.section_table import Section
 
@@ -45,6 +45,6 @@ def write_string(
 def read_section_data(file: BinaryIO, section: Section) -> bytes:
     return read_bytes(
         file,
-        cast(int, section.pointer_to_raw_data),
-        cast(int, section.size_of_raw_data),
+        Offset(section.pointer_to_raw_data),
+        Offset(section.size_of_raw_data),
     )
