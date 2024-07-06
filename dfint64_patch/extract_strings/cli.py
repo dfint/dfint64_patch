@@ -17,6 +17,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
     ExtractedStringInfo,
     extract_strings_from_raw_bytes,
 )
+from dfint64_patch.type_aliases import Rva
 
 
 def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
@@ -26,23 +27,23 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
     code_section = sections[0]
     string_section = sections[1]
 
-    image_base = cast(int, pe.optional_header.image_base)
+    image_base = pe.optional_header.image_base
 
     strings = list(
         extract_strings_from_raw_bytes(
             read_section_data(pe_file, string_section),
-            base_address=cast(int, string_section.virtual_address) + image_base,
+            base_address=Rva(cast(int, string_section.virtual_address) + image_base),
         ),
     )
 
     cross_references = find_relative_cross_references(
         read_section_data(pe_file, code_section),
-        base_address=cast(int, code_section.virtual_address) + image_base,
+        base_address=Rva(cast(int, code_section.virtual_address) + image_base),
         addresses=map(operator.itemgetter(0), strings),
     )
 
     filtered = filter(lambda x: x[0] in cross_references, strings)
-    result = sorted(filtered, key=lambda s: min(cross_references[s.offset]))
+    result = sorted(filtered, key=lambda s: min(cross_references[s.address]))
 
     yield from result
 

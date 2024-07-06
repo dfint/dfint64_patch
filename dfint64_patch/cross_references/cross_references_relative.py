@@ -29,10 +29,10 @@ def find_relative_cross_references(
     for i in range(len(bytes_block) - 3):
         relative_offset = int.from_bytes(bytes(view[i : i + 4]), byteorder="little", signed=True)
 
-        destination = base_address + i + 4 + relative_offset
+        destination = Rva(base_address + i + 4 + relative_offset)
 
         if destination in addresses:
-            result[destination].append(base_address + i)
+            result[destination].append(Rva(base_address + i))
 
     return result
 

@@ -14,6 +14,7 @@ from dfint64_patch.cross_references.cross_references_relative import (
 )
 from dfint64_patch.dictionary_loaders.csv_loader import load_translation_file
 from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_raw_bytes
+from dfint64_patch.type_aliases import Rva
 
 
 def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]]) -> None:
@@ -30,7 +31,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         strings = dict(
             extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
-                base_address=cast(int, data_section.virtual_address) + image_base,
+                base_address=Rva(cast(int, data_section.virtual_address) + image_base),
             ),
         )
 
@@ -39,7 +40,7 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
             read_section_data(pe_file, code_section),
-            base_address=cast(int, code_section.virtual_address) + image_base,
+            base_address=Rva(cast(int, code_section.virtual_address) + image_base),
             addresses=strings,
         )
 

@@ -8,7 +8,7 @@ in the code section.
 from collections.abc import Iterator
 from typing import NamedTuple
 
-from dfint64_patch.type_aliases import Offset, Rva
+from dfint64_patch.type_aliases import RVA0, Rva
 
 forbidden: set[int] = set(b"$^@")
 allowed: set[int] = set()
@@ -55,13 +55,13 @@ def check_string(buf: bytes | memoryview, encoding: str) -> tuple[int, int]:
 
 
 class ExtractedStringInfo(NamedTuple):
-    offset: Offset
+    address: Rva
     string: str
 
 
 def extract_strings_from_raw_bytes(
     bytes_block: bytes,
-    base_address: Rva = 0,
+    base_address: Rva = RVA0,
     alignment: int = 4,
     encoding: str = "cp437",
 ) -> Iterator[ExtractedStringInfo]:
@@ -71,7 +71,7 @@ def extract_strings_from_raw_bytes(
     :param base_address: base address of the bytes block
     :param alignment: alignment of strings
     :param encoding: string encoding
-    :return: Iterator[Tuple[string_address: Rva, string: str]]
+    :return: Iterator[ExtractedStringInfo]
     """
     view = memoryview(bytes_block)
 
@@ -81,7 +81,7 @@ def extract_strings_from_raw_bytes(
         string_len, letters = check_string(buffer_part, encoding)
         if string_len and letters:
             string = bytes(view[i : i + string_len]).decode(encoding)
-            yield ExtractedStringInfo(base_address + i, string)
+            yield ExtractedStringInfo(Rva(base_address + i), string)
             i += (string_len // alignment + 1) * alignment
             continue
 
