@@ -26,11 +26,11 @@ start:
     invoke ExitProcess, 0
 
 .data
-    buffer rb 1024
-
     endl string 13, 10
     sHello string 'Hello, World!'
     aUnitReportShee string 'Unit report sheet popup'
     hOut dq ?
+
+    buffer rb 1024
 
 .end start
