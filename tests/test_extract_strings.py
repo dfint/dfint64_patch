@@ -54,11 +54,17 @@ def test_extract_strings_from_raw_bytes(test_data: dict, expected: dict):
     assert dict(extract_strings_from_raw_bytes(**test_data)) == expected
 
 
+EXE_STRINGS = {
+    "Hello, World!",
+    "Unit report sheet popup",
+}
+
+
 def test_extract_string_cli():
     exe_file_path = Path(__file__).parent / "test64.exe"
     with Path(exe_file_path).open("rb") as pe_file:
-        strings = [x.string for x in extract_strings(pe_file)]
-        assert "Hello, World!" in strings
+        strings = {x.string for x in extract_strings(pe_file)}
+        assert strings >= EXE_STRINGS
 
 
 def test_extract_strings_cli_2():
@@ -69,9 +75,9 @@ def test_extract_strings_cli_2():
             main([str(exe_file_path), str(file_name)])
 
         with Path(file_name).open() as file:
-            strings = [line.rstrip() for line in file]
+            strings = {line.rstrip() for line in file}
 
-        assert "Hello, World!" in strings
+        assert strings >= EXE_STRINGS
 
 
 def test_extract_strings_cli_3():
@@ -82,5 +88,5 @@ def test_extract_strings_cli_3():
         with contextlib.suppress(SystemExit):
             main([str(exe_file_path)])
 
-        strings = stdout.getvalue().splitlines()
-        assert "Hello, World!" in strings
+        strings = set(stdout.getvalue().splitlines())
+        assert strings >= EXE_STRINGS
