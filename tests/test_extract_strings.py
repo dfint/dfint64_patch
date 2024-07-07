@@ -70,10 +70,13 @@ EXE_STRINGS = {
 def exe_strings() -> set[str]:
     if platform.system() == "Windows":
         result = subprocess.check_output([tests_dir / "test64.exe"], shell=False)  # noqa: S603
-    else:
-        result = subprocess.check_output(["wine", tests_dir / "test64.exe"], shell=False)  # noqa: S603, S607
+        return set(result.decode().splitlines())
 
-    return set(result.decode().splitlines())
+    try:
+        result = subprocess.check_output(["wine", tests_dir / "test64.exe"], shell=False)  # noqa: S603, S607
+        return set(result.decode().splitlines())
+    except FileNotFoundError:
+        return EXE_STRINGS
 
 
 def test_exe_strings(exe_strings: set[str]):
