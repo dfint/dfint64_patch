@@ -8,10 +8,12 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
@@ -29,8 +31,7 @@ jobs:
         cache-dependency-path: poetry.lock
 
     - name: Install fasm
-      run: |
-        sudo apt install fasm
+      uses: stevenwdv/setup-fasm@v1
 
     - name: Compile test exe file
       run: |
