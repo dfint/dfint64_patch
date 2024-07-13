@@ -9,7 +9,6 @@ updates:
         patterns:
           - "black"
           - "coverage"
-          - "flake8*"
           - "hypothesis"
           - "isort"
           - "mypy"
