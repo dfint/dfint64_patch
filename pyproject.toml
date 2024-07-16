@@ -59,6 +59,7 @@ ignore = [
     # "D212",  # Multi-line docstring summary should start at the first line
     "TD",  # Ignore todo warnings
     "FIX002",  # Ignore todo warnings
+    "COM812",  # Ignore missing trailing comma warning, which conflicts with formatter
 ]
 
 [tool.ruff.lint.per-file-ignores]
