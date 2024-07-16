@@ -5,15 +5,18 @@ import platform
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import pytest
 from _pytest.capture import CaptureFixture
 
 from dfint64_patch.extract_strings.cli import extract_strings, main
 from dfint64_patch.extract_strings.from_raw_bytes import (
+    ExtractedStringInfo,
     check_string,
     extract_strings_from_raw_bytes,
 )
+from dfint64_patch.type_aliases import Rva
 
 tests_dir = Path(__file__).parent
 
@@ -40,7 +43,11 @@ def test_check_string(test_data: bytes, encoding: str, expected: tuple[int, int]
                 + b"qwerty qwerty".ljust(16, b"\0")
                 + b"xyz\0",
             ),
-            {8: "bc", 12: "qwerty qwerty", 28: "xyz"},
+            {
+                ExtractedStringInfo(Rva(8), "bc"),
+                ExtractedStringInfo(Rva(12), "qwerty qwerty"),
+                ExtractedStringInfo(Rva(28), "xyz"),
+            },
         ),
         (
             dict(
@@ -51,13 +58,17 @@ def test_check_string(test_data: bytes, encoding: str, expected: tuple[int, int]
                 + b"qwerty qwerty".ljust(16, b"\0")
                 + b"xyz\0",
             ),
-            {7: "abc", 12: "qwerty qwerty", 28: "xyz"},
+            {
+                ExtractedStringInfo(Rva(7), "abc"),
+                ExtractedStringInfo(Rva(12), "qwerty qwerty"),
+                ExtractedStringInfo(Rva(28), "xyz"),
+            },
         ),
-        (dict(bytes_block=b"12345\xff\0", encoding="utf-8"), {}),  # b"\xFF" cannot be decoded from utf-8 encoding
+        (dict(bytes_block=b"12345\xff\0", encoding="utf-8"), set()),  # b"\xFF" cannot be decoded from utf-8 encoding
     ],
 )
-def test_extract_strings_from_raw_bytes(test_data: dict, expected: dict):
-    assert dict(extract_strings_from_raw_bytes(**test_data)) == expected
+def test_extract_strings_from_raw_bytes(test_data: dict[str, Any], expected: set[ExtractedStringInfo]):
+    assert set(extract_strings_from_raw_bytes(**test_data)) == expected
 
 
 EXE_STRINGS = {
