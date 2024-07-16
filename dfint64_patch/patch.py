@@ -1,3 +1,4 @@
+from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import cast
 
@@ -17,7 +18,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_ra
 from dfint64_patch.type_aliases import Rva
 
 
-def run(source_file: str, patched_file: str, translation_table: list[tuple[str, str]]) -> None:
+def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: str) -> None:
     with Path(patched_file).open("r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
@@ -28,12 +29,13 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         image_base = cast(int, pe.optional_header.image_base)
 
         logger.info("Extracting strings...")
-        strings = dict(
-            extract_strings_from_raw_bytes(
+        strings = {
+            item.address: item.string
+            for item in extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
                 base_address=Rva(cast(int, data_section.virtual_address) + image_base),
-            ),
-        )
+            )
+        }
 
         logger.info("Found", len(strings), "string-like objects")
 
@@ -52,22 +54,32 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
         logger.info("Searching intersections in the cross references...")
 
         intersections = find_intersected_cross_references(cross_references)
-
-        for ref1, ref2 in intersections:
-            obj1_rva = object_rva_by_reference[ref1]
-            obj2_rva = object_rva_by_reference[ref2]
-            logger.info(
-                f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
-                f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})",
-            )
+        print_intersections(intersections, object_rva_by_reference, strings)
 
         translation_dictionary = dict(translation_table)
         for string in strings.values():
             translation = translation_dictionary.get(string)
             if translation:
-                ...  # work in progress...
+                if len(translation) <= len(string):
+                    encoded_translation = translation.encode(encoding).ljust(len(string) + 1, b"\x00")
+                    pe_file.write(encoded_translation)
+                else:
+                    # TODO: implement this case
+                    logger.warning(f"Translation for string {string!r} is longer than original one ({translation!r})")
 
-        print(source_file)
+
+def print_intersections(
+    intersections: Iterator[tuple[Rva, Rva]],
+    object_rva_by_reference: Mapping[Rva, Rva],
+    strings: dict[Rva, str],
+) -> None:
+    for ref1, ref2 in intersections:
+        obj1_rva = object_rva_by_reference[ref1]
+        obj2_rva = object_rva_by_reference[ref2]
+        logger.info(
+            f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
+            f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})",
+        )
 
 
 @click.command()
@@ -78,8 +90,9 @@ def run(source_file: str, patched_file: str, translation_table: list[tuple[str, 
 )
 @click.argument("patched_file", default="Dwarf Fortress Patched.exe")
 @click.option("--dict", "dictionary_file", help="Path to the dictionary csv file")
+@click.option("--encoding", "encoding", help="Encoding for the translation", default="cp437")
 @click.option("--cleanup", "cleanup", help="Remove patched file on error", default=False)
-def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: bool) -> None:  # noqa: FBT001
+def main(source_file: str, patched_file: str, dictionary_file: str, encoding: str, cleanup: bool) -> None:  # noqa: FBT001
     with copy_source_file_context(source_file, patched_file, cleanup=cleanup):
         logger.info("Loading translation file...")
 
@@ -88,7 +101,7 @@ def main(source_file: str, patched_file: str, dictionary_file: str, cleanup: boo
 
         print(source_file)  # TODO: split translation table for debugging
 
-        run(source_file, patched_file, translation_table)
+        run(patched_file, translation_table, encoding)
 
 
 if __name__ == "__main__":

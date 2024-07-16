@@ -39,8 +39,8 @@ def find_relative_cross_references(
 
 def invert_cross_reference_table(cross_references: Mapping[Rva, list[Rva]]) -> Mapping[Rva, Rva]:
     """
-    Invert mapping from {Destination Rva: list of cross reverences} to {cross reference: destination}
-    :param cross_references:
+    Invert mapping from {Destination Rva: [cross-reverence Rva]} to {cross-reference Rva: Destination Rva}
+    :param cross_references: mapping of the cross-references
     :return: Mapping[source: Rva, destination: Rva] - inverted mapping
     """
     result = {}
