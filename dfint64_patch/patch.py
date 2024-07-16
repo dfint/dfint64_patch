@@ -28,12 +28,13 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
         image_base = cast(int, pe.optional_header.image_base)
 
         logger.info("Extracting strings...")
-        strings = dict(
-            extract_strings_from_raw_bytes(
+        strings = {
+            item.address: item.string
+            for item in extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
                 base_address=Rva(cast(int, data_section.virtual_address) + image_base),
-            ),
-        )
+            )
+        }
 
         logger.info("Found", len(strings), "string-like objects")
 
