@@ -1,3 +1,4 @@
+from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import cast
 
@@ -53,14 +54,7 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
         logger.info("Searching intersections in the cross references...")
 
         intersections = find_intersected_cross_references(cross_references)
-
-        for ref1, ref2 in intersections:
-            obj1_rva = object_rva_by_reference[ref1]
-            obj2_rva = object_rva_by_reference[ref2]
-            logger.info(
-                f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
-                f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})",
-            )
+        print_intersections(intersections, object_rva_by_reference, strings)
 
         translation_dictionary = dict(translation_table)
         for string in strings.values():
@@ -72,6 +66,20 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
                 else:
                     # TODO: implement this case
                     logger.warning(f"Translation for string {string!r} is longer than original one ({translation!r})")
+
+
+def print_intersections(
+    intersections: Iterator[tuple[Rva, Rva]],
+    object_rva_by_reference: Mapping[Rva, Rva],
+    strings: dict[Rva, str],
+) -> None:
+    for ref1, ref2 in intersections:
+        obj1_rva = object_rva_by_reference[ref1]
+        obj2_rva = object_rva_by_reference[ref2]
+        logger.info(
+            f"0x{ref1:x} (to 0x{obj1_rva:x} {strings[obj1_rva]!r}) / "
+            f"0x{ref2:x} (to 0x{obj2_rva:x} {strings[obj2_rva]!r})",
+        )
 
 
 @click.command()
