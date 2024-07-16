@@ -33,12 +33,6 @@ priority = "explicit"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
-line-length = 120
-
-[tool.isort]
-profile = "black"
-
 [tool.mypy]
 ignore_missing_imports = true
 
