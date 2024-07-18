@@ -21,3 +21,6 @@ dist/
 stringdump*
 
 .DS_Store
+
+outputs/
+.*.yaml
