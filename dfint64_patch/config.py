@@ -6,6 +6,10 @@ from omegaconf import DictConfig, OmegaConf
 
 
 def with_config(config_class: type, config_file: str) -> Callable[[Callable[[DictConfig], None]], Callable[[], None]]:
+    """
+    A decorator to load the config file and merge it with the CLI options.
+    """
+
     def decorator(func: Callable[[DictConfig], None]) -> Callable[[], None]:
         @functools.wraps(func)
         def wrapper() -> None:
