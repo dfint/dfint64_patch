@@ -58,7 +58,7 @@ def maybe_open(file_name: str | None) -> Generator[TextIO, None, None]:
     :param file_name: file name or None
     :return: file object
     """
-    file_object = sys.stdout if file_name is None else Path(file_name).open("w")  # noqa: SIM115
+    file_object = sys.stdout if file_name is None or file_name == "stdout" else Path(file_name).open("w")  # noqa: SIM115
 
     try:
         yield file_object
