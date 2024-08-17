@@ -6,7 +6,7 @@
 
 Text patcher for x64 bit version of the Dwarf Fortress game (work in progress).
 
-You need python 3.10+ and poetry installed (`pip3 install poetry` or `pip install poetry`). Then run `poetry install` from the command line: it will create a virtual environment in the project's directory and install all the requirements into it. 
+You need python 3.10+ and poetry installed (`pip3 install poetry` or `pip install poetry`). Then run `poetry install` from the command line: it will create a virtual environment in the project's directory and install all the requirements into it.
 
 Basic usage examples:
 

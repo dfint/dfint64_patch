@@ -1,9 +1,10 @@
 import contextlib
-import io
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
+from _pytest.capture import CaptureFixture
 
 from dfint64_patch.extract_strings.cli import extract_strings, main
 from dfint64_patch.extract_strings.from_raw_bytes import (
@@ -72,7 +73,8 @@ def test_extract_strings_cli_2():
     with tempfile.TemporaryDirectory() as temp_dir:
         file_name = Path(temp_dir) / "string_dump.txt"
         with contextlib.suppress(SystemExit):
-            main([str(exe_file_path), str(file_name)])
+            sys.argv = [sys.argv[0], f"file_name={exe_file_path}", f"out_file={file_name}"]
+            main()
 
         with Path(file_name).open() as file:
             strings = {line.rstrip() for line in file}
@@ -80,13 +82,12 @@ def test_extract_strings_cli_2():
         assert strings >= EXE_STRINGS
 
 
-def test_extract_strings_cli_3():
+def test_extract_strings_cli_3(capsys: CaptureFixture[str]):
     exe_file_path = Path(__file__).parent / "test64.exe"
-    stdout = io.StringIO()
 
-    with contextlib.redirect_stdout(stdout):
-        with contextlib.suppress(SystemExit):
-            main([str(exe_file_path)])
+    with contextlib.suppress(SystemExit):
+        sys.argv = [sys.argv[0], f"file_name={exe_file_path}", "out_file=stdout"]
+        main()
 
-        strings = set(stdout.getvalue().splitlines())
-        assert strings >= EXE_STRINGS
+    strings = set(capsys.readouterr().out.splitlines())
+    assert strings >= EXE_STRINGS

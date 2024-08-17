@@ -10,6 +10,8 @@ python = "^3.10"
 click = "^8.1.7"
 loguru = "^0.7.2"
 peclasses = {version = "^0.4.0", source = "dfint"}
+omegaconf = "^2.3.0"
+poethepoet = "^0.27.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"
@@ -22,7 +24,9 @@ ruff = "^0.5.5"
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
 patch = "dfint64_patch.patch:main"
-patch_charmap = "dfint64_patch.charmap.cli:main"
+
+[tool.poe.tasks]
+extract.script = "dfint64_patch.extract_strings.cli:main"
 
 [[tool.poetry.source]]
 name = "dfint"

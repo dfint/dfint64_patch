@@ -1,0 +1,3 @@
+file_name: "/full/path/to/Dwarf Fortress.exe"
+out_file: "stringdump.txt"
+# Then just run `poe extract` or `poetry run extract`
