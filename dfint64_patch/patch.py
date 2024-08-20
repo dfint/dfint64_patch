@@ -37,7 +37,7 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
             )
         }
 
-        logger.info("Found", len(strings), "string-like objects")
+        logger.info(f"Found {len(strings)} string-like objects")
 
         logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
@@ -48,8 +48,8 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
 
         object_rva_by_reference = invert_cross_reference_table(cross_references)
 
-        logger.info("Found", len(cross_references), "objects with references from code section")
-        logger.info("In total", sum(map(len, cross_references.values())), "cross references")
+        logger.info(f"Found {len(cross_references)} objects with references from code section")
+        logger.info(f"In total {sum(map(len, cross_references.values()))} cross references")
 
         logger.info("Searching intersections in the cross references...")
 

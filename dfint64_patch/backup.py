@@ -15,7 +15,7 @@ def copy_source_file_context(src: str | PathLike, dest: T, *, cleanup: bool) -> 
     """
     Context manager to back up file and restore it on exit (if needed)
     """
-    logger.info(f"Copying '{src}'\nTo '{dest}'...")
+    logger.info(f"Copying {src!r}\nTo {dest!r}...")
     try:
         copy(src, dest)
     except OSError:
@@ -28,6 +28,6 @@ def copy_source_file_context(src: str | PathLike, dest: T, *, cleanup: bool) -> 
         yield dest
     except Exception:
         if cleanup:
-            logger.info(f"Removing '{dest}'")
+            logger.info(f"Removing {dest!r}")
             Path(dest).unlink()
         raise

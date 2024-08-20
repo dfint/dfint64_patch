@@ -78,7 +78,7 @@ def main(conf: DictConfig) -> None:
     with Path(conf.file_name).open("rb") as pe_file, maybe_open(conf.get("out_file", None)) as out_file_object:
         for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)
-            logger.info("0x{:X} {!r}", address, string, file=out_file_object)
+            logger.info(f"0x{address:X} {string!r}")
 
 
 if __name__ == "__main__":
