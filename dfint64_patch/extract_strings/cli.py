@@ -68,14 +68,14 @@ def maybe_open(file_name: str | None) -> Generator[TextIO, None, None]:
 
 
 @dataclass
-class ExtractConfig:
+class ExtractConfig(DictConfig):
     file_name: str
     out_file: str | None = None
 
 
 @with_config(ExtractConfig, ".extract.yaml")
-def main(conf: DictConfig) -> None:
-    with Path(conf.file_name).open("rb") as pe_file, maybe_open(conf.get("out_file", None)) as out_file_object:
+def main(conf: ExtractConfig) -> None:
+    with Path(conf.file_name).open("rb") as pe_file, maybe_open(conf.out_file) as out_file_object:
         for address, string in extract_strings(pe_file):
             print(string, file=out_file_object)
             logger.info(f"0x{address:X} {string!r}")
