@@ -1,8 +1,7 @@
 import contextlib
-
-import sys
 import platform
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
