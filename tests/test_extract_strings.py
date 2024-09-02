@@ -76,7 +76,7 @@ EXE_STRINGS = {
 }
 
 
-@pytest.fixture()
+@pytest.fixture
 def exe_strings() -> set[str]:
     if platform.system() == "Windows":
         result = subprocess.check_output([tests_dir / "test64.exe"], shell=False)  # noqa: S603
