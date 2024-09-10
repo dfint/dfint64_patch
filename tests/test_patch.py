@@ -11,7 +11,7 @@ from dfint64_patch.patch import run
 @pytest.mark.skipif(not possible_to_run_exe(), reason="Impossible to run exe file")
 def test_patch_same_length(exe_file_path: Path):
     strings = get_exe_stdout(exe_file_path)
-    string = list(strings)[0]
+    string = next(iter(strings))
     translation = get_random_string(length=len(string), not_equals=string)
     dictionary = {string: translation}
 

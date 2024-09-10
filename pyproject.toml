@@ -68,4 +68,5 @@ ignore = [
     "ANN201",  # Ignore "Missing return type annotation for public function", tests don't return anything
     "D",  # Don't warn about missing documentation in tests
     "RUF001",  # String contains ambiguous {}. Did you mean {}?
+    "S311",  # Standard pseudo-random generators are not suitable for cryptographic purposes
 ]

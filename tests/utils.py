@@ -1,5 +1,6 @@
 import platform
 import random
+import shutil
 import string
 import subprocess
 from pathlib import Path
@@ -12,11 +13,7 @@ def possible_to_run_exe() -> bool:
     if platform.system() == "Windows":
         return True
 
-    try:
-        subprocess.run(["wine"], shell=False, check=False)
-        return True
-    except FileNotFoundError:
-        return False
+    return shutil.which("wine") is not None
 
 
 def get_exe_stdout(exe_path: Path) -> set[str]:
@@ -37,4 +34,5 @@ def get_random_string(length: int, not_equals: str | None = None) -> str:
 
         counter += 1
         if counter >= _MAX_RETRIES:
-            raise ValueError("Infinite loop")
+            msg = "Infinite loop"
+            raise ValueError(msg)

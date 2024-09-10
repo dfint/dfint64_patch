@@ -26,7 +26,7 @@ def run(patched_file: str | Path, translation_table: list[tuple[str, str]], enco
         code_section = sections[0]
         data_section = sections[1]
 
-        image_base = cast(int, pe.optional_header.image_base)
+        cast(int, pe.optional_header.image_base)
 
         logger.info("Extracting strings...")
         strings = {
