@@ -1,6 +1,4 @@
 import contextlib
-import platform
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -17,7 +15,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
 )
 from dfint64_patch.type_aliases import Rva
 
-tests_dir = Path(__file__).parent
+from .utils import get_exe_stdout
 
 
 @pytest.mark.parametrize(
@@ -77,16 +75,11 @@ EXE_STRINGS = {
 
 
 @pytest.fixture
-def exe_strings() -> set[str]:
-    if platform.system() == "Windows":
-        result = subprocess.check_output([tests_dir / "test64.exe"], shell=False)  # noqa: S603
-    else:
-        try:
-            result = subprocess.check_output(["wine", tests_dir / "test64.exe"], shell=False)  # noqa: S603, S607
-        except FileNotFoundError:
-            return EXE_STRINGS
-
-    return set(result.decode().splitlines())
+def exe_strings(exe_file_path: Path) -> set[str]:
+    try:
+        return get_exe_stdout(exe_file_path)
+    except FileNotFoundError:
+        return EXE_STRINGS
 
 
 def test_exe_strings(exe_strings: set[str]):
@@ -94,15 +87,13 @@ def test_exe_strings(exe_strings: set[str]):
     assert exe_strings <= EXE_STRINGS
 
 
-def test_extract_string_cli(exe_strings: set[str]):
-    exe_file_path = tests_dir / "test64.exe"
+def test_extract_string_cli(exe_file_path: Path, exe_strings: set[str]):
     with Path(exe_file_path).open("rb") as pe_file:
         strings = {x.string for x in extract_strings(pe_file)}
         assert strings >= exe_strings
 
 
-def test_extract_strings_cli_2(exe_strings: set[str]):
-    exe_file_path = tests_dir / "test64.exe"
+def test_extract_strings_cli_2(exe_file_path: Path, exe_strings: set[str]):
     with tempfile.TemporaryDirectory() as temp_dir:
         file_name = Path(temp_dir) / "string_dump.txt"
         with contextlib.suppress(SystemExit):
@@ -115,9 +106,7 @@ def test_extract_strings_cli_2(exe_strings: set[str]):
         assert strings >= exe_strings
 
 
-def test_extract_strings_cli_3(capsys: CaptureFixture[str], exe_strings: set[str]):
-    exe_file_path = Path(__file__).parent / "test64.exe"
-
+def test_extract_strings_cli_3(exe_file_path: Path, capsys: CaptureFixture[str], exe_strings: set[str]):
     with contextlib.suppress(SystemExit):
         sys.argv = [sys.argv[0], f"file_name={exe_file_path}", "out_file=stdout"]
         main()

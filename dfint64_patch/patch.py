@@ -1,4 +1,4 @@
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import cast
 
@@ -18,7 +18,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_ra
 from dfint64_patch.type_aliases import Rva
 
 
-def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: str) -> None:
+def run(patched_file: str | Path, translation_table: list[tuple[str, str]], encoding: str) -> None:
     with Path(patched_file).open("r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
@@ -33,7 +33,7 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
             item.address: item.string
             for item in extract_strings_from_raw_bytes(
                 read_section_data(pe_file, data_section),
-                base_address=Rva(cast(int, data_section.virtual_address) + image_base),
+                base_address=Rva(cast(int, data_section.virtual_address)),
             )
         }
 
@@ -42,7 +42,7 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
         logger.info("Searching for cross references...")
         cross_references = find_relative_cross_references(
             read_section_data(pe_file, code_section),
-            base_address=Rva(cast(int, code_section.virtual_address) + image_base),
+            base_address=Rva(cast(int, code_section.virtual_address)),
             addresses=strings,
         )
 
@@ -53,15 +53,16 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
 
         logger.info("Searching intersections in the cross references...")
 
-        intersections = find_intersected_cross_references(cross_references)
+        intersections = list(find_intersected_cross_references(cross_references))
         print_intersections(intersections, object_rva_by_reference, strings)
 
         translation_dictionary = dict(translation_table)
-        for string in strings.values():
+        for rva, string in strings.items():
             translation = translation_dictionary.get(string)
             if translation:
                 if len(translation) <= len(string):
                     encoded_translation = translation.encode(encoding).ljust(len(string) + 1, b"\x00")
+                    pe_file.seek(data_section.rva_to_offset(rva))
                     pe_file.write(encoded_translation)
                 else:
                     # TODO: implement this case
@@ -69,7 +70,7 @@ def run(patched_file: str, translation_table: list[tuple[str, str]], encoding: s
 
 
 def print_intersections(
-    intersections: Iterator[tuple[Rva, Rva]],
+    intersections: Iterable[tuple[Rva, Rva]],
     object_rva_by_reference: Mapping[Rva, Rva],
     strings: dict[Rva, str],
 ) -> None:
