@@ -18,7 +18,7 @@ from dfint64_patch.extract_strings.from_raw_bytes import extract_strings_from_ra
 from dfint64_patch.type_aliases import Rva
 
 
-def run(patched_file: str | Path, translation_table: list[tuple[str, str]], encoding: str) -> None:
+def patch(patched_file: str | Path, translation_table: list[tuple[str, str]], encoding: str) -> None:
     with Path(patched_file).open("r+b") as pe_file:
         pe = PortableExecutable(pe_file)
 
@@ -102,7 +102,7 @@ def main(source_file: str, patched_file: str, dictionary_file: str, encoding: st
 
         print(source_file)  # TODO: split translation table for debugging
 
-        run(patched_file, translation_table, encoding)
+        patch(patched_file, translation_table, encoding)
 
 
 if __name__ == "__main__":

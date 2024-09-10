@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from dfint64_patch.patch import run
+from dfint64_patch.patching import patch
 
 from .utils import get_exe_stdout, get_random_string, possible_to_run_exe
 
@@ -19,7 +19,7 @@ def test_patch_same_length(exe_file_path: Path):
     patched_exe = Path(tempfile.gettempdir()) / "test.exe"
     shutil.copy(exe_file_path, patched_exe)
 
-    run(patched_exe, list(dictionary.items()), encoding="latin")
+    patch(patched_exe, list(dictionary.items()), encoding="latin")
     new_strings = set(get_exe_stdout(patched_exe))
 
     assert string not in new_strings
