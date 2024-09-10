@@ -77,7 +77,7 @@ EXE_STRINGS = {
 @pytest.fixture
 def exe_strings(exe_file_path: Path) -> set[str]:
     try:
-        return get_exe_stdout(exe_file_path)
+        return set(get_exe_stdout(exe_file_path))
     except FileNotFoundError:
         return EXE_STRINGS
 

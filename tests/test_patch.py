@@ -11,7 +11,7 @@ from .utils import get_exe_stdout, get_random_string, possible_to_run_exe
 
 @pytest.mark.skipif(not possible_to_run_exe(), reason="Impossible to run exe file")
 def test_patch_same_length(exe_file_path: Path):
-    strings = get_exe_stdout(exe_file_path)
+    strings = set(get_exe_stdout(exe_file_path))
     string = next(iter(strings))
     translation = get_random_string(length=len(string), not_equals=string)
     dictionary = {string: translation}
@@ -20,7 +20,7 @@ def test_patch_same_length(exe_file_path: Path):
     shutil.copy(exe_file_path, patched_exe)
 
     run(patched_exe, list(dictionary.items()), encoding="latin")
-    new_strings = get_exe_stdout(patched_exe)
+    new_strings = set(get_exe_stdout(patched_exe))
 
     assert string not in new_strings
     assert translation in new_strings
