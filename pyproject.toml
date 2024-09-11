@@ -69,4 +69,5 @@ ignore = [
     "D",  # Don't warn about missing documentation in tests
     "RUF001",  # String contains ambiguous {}. Did you mean {}?
     "S311",  # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "PLR2004",  # Magic value used in comparison
 ]

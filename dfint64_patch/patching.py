@@ -61,7 +61,8 @@ def patch(patched_file: str | Path, translation_table: list[tuple[str, str]], en
             translation = translation_dictionary.get(string)
             if translation:
                 if len(translation) <= len(string):
-                    encoded_translation = translation.encode(encoding).ljust(len(string) + 1, b"\x00")
+                    # Shorter strings are padded with spaces
+                    encoded_translation = translation.encode(encoding).ljust(len(string) + 1) + b"\0"
                     pe_file.seek(data_section.rva_to_offset(rva))
                     pe_file.write(encoded_translation)
                 else:
