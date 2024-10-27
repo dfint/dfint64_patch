@@ -28,12 +28,3 @@ Options:
   --cleanup BOOLEAN  Remove patched file on error
   --help             Show this message and exit.
 ```
-
-```commandline
-> poetry run patch_charmap --help
-Usage: patch_charmap [OPTIONS] [SOURCE_FILE] [PATCHED_FILE] CODEPAGE
-
-Options:
-  --cleanup BOOLEAN  Remove patched file on error
-  --help             Show this message and exit.
-```
