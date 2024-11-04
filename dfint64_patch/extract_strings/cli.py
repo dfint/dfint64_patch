@@ -1,10 +1,8 @@
 import operator
-import sys
-from collections.abc import Generator, Iterator
-from contextlib import contextmanager
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import BinaryIO, TextIO, cast
+from typing import BinaryIO, cast
 
 from loguru import logger
 from omegaconf import DictConfig
@@ -20,9 +18,10 @@ from dfint64_patch.extract_strings.from_raw_bytes import (
     extract_strings_from_raw_bytes,
 )
 from dfint64_patch.type_aliases import Rva
+from dfint64_patch.utils import maybe_open
 
 
-def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
+def extract_strings(pe_file: BinaryIO) -> Iterable[ExtractedStringInfo]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table
@@ -45,26 +44,7 @@ def extract_strings(pe_file: BinaryIO) -> Iterator[ExtractedStringInfo]:
     )
 
     filtered = filter(lambda x: x[0] in cross_references, strings)
-    result = sorted(filtered, key=lambda s: min(cross_references[s.address]))
-
-    yield from result
-
-
-@contextmanager
-def maybe_open(file_name: str | None) -> Generator[TextIO, None, None]:
-    """
-    Open a file if the name is provided, and close it on exit from with-block,
-    or provide stdout as a file object, if the file_name parameter is None
-    :param file_name: file name or None
-    :return: file object
-    """
-    file_object = sys.stdout if file_name is None or file_name == "stdout" else Path(file_name).open("w")  # noqa: SIM115
-
-    try:
-        yield file_object
-    finally:
-        if file_object != sys.stdout:
-            file_object.close()
+    return sorted(filtered, key=lambda s: min(cross_references[s.address]))
 
 
 @dataclass
