@@ -1,6 +1,7 @@
 """
 Extract strings grouped by subroutines
 """
+
 from collections import defaultdict
 from dataclasses import dataclass
 from operator import itemgetter
@@ -57,10 +58,12 @@ def extract_strings_grouped_by_subs(pe_file: BinaryIO) -> dict[Rva, list[StringC
 
     strings_with_xrefs = extract_strings_with_xrefs(pe_file, pe)
 
-    subroutines = list(extract_subroutines(
-        read_section_data(pe_file, code_section),
-        base_offset=code_section.virtual_address,
-    ))
+    subroutines = list(
+        extract_subroutines(
+            read_section_data(pe_file, code_section),
+            base_offset=code_section.virtual_address,
+        )
+    )
 
     raw_result: dict[SubroutineInfo, list[StringCrossReference]] = defaultdict(list)
     for string_info, xrefs in strings_with_xrefs.items():
