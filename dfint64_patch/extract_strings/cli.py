@@ -1,5 +1,4 @@
 import operator
-from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO, cast
@@ -21,7 +20,7 @@ from dfint64_patch.type_aliases import Rva
 from dfint64_patch.utils import maybe_open
 
 
-def extract_strings(pe_file: BinaryIO) -> Iterable[ExtractedStringInfo]:
+def extract_strings(pe_file: BinaryIO) -> list[ExtractedStringInfo]:
     pe = PortableExecutable(pe_file)
 
     sections = pe.section_table

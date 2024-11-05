@@ -1,5 +1,5 @@
 """
-TODO: Extract strings grouped by subroutines
+Extract strings grouped by subroutines
 """
 from collections import defaultdict
 from dataclasses import dataclass
@@ -48,7 +48,7 @@ class StringCrossReference(NamedTuple):
     cross_reference: Rva
 
 
-def extract_strings_with_subs(pe_file: BinaryIO) -> dict[Rva, list[StringCrossReference]]:
+def extract_strings_grouped_by_subs(pe_file: BinaryIO) -> dict[Rva, list[StringCrossReference]]:
     pe = PortableExecutable(pe_file)
     sections = pe.section_table
     code_section = sections[0]
@@ -87,7 +87,7 @@ class ExtractConfig(DictConfig):
 @with_config(ExtractConfig, ".extract.yaml")
 def main(conf: ExtractConfig) -> None:
     with Path(conf.file_name).open("rb") as pe_file:
-        for subroutine, strings in extract_strings_with_subs(pe_file).items():
+        for subroutine, strings in extract_strings_grouped_by_subs(pe_file).items():
             print(f"sub_{subroutine:x}:")
             for string in strings:
                 print(f"\t{string.string}")
