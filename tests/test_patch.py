@@ -4,8 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from dfint64_patch.patching import patch
-
+from dfint64_patch.patching.patch import patch
 from .utils import get_exe_stdout, get_random_string, possible_to_run_exe
 
 
