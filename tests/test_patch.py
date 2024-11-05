@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from dfint64_patch.patching.patch import patch
+
 from .utils import get_exe_stdout, get_random_string, possible_to_run_exe
 
 
@@ -37,7 +38,7 @@ def test_patch_shorter(exe_file_path: Path):
         msg = "No source strings longer then 2"
         raise ValueError(msg)
 
-    translation = get_random_string(length=len(string)-1, not_equals=string)
+    translation = get_random_string(length=len(string) - 1, not_equals=string)
     dictionary = {string: translation}
 
     patched_exe = Path(tempfile.gettempdir()) / "test.exe"

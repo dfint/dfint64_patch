@@ -7,9 +7,9 @@ from dfint64_patch.extract_subroutines.from_raw_bytes import SubroutineInfo, ext
     ("test_data", "offset", "expected"),
     [
         (b"\x90" * 8, 0, [SubroutineInfo(0, 8)]),
-        (b"\x90\xCC", 0, [SubroutineInfo(0, 2)]),
-        (b"\x90\xCC\xCC\xCC\x90\x90", 0, [SubroutineInfo(0, 1), SubroutineInfo(4, 6)]),
-        (b"\x90\xCC\xCC\xCC\x90\x90", 1, [SubroutineInfo(1, 2), SubroutineInfo(5, 7)]),
+        (b"\x90\xcc", 0, [SubroutineInfo(0, 2)]),
+        (b"\x90\xcc\xcc\xcc\x90\x90", 0, [SubroutineInfo(0, 1), SubroutineInfo(4, 6)]),
+        (b"\x90\xcc\xcc\xcc\x90\x90", 1, [SubroutineInfo(1, 2), SubroutineInfo(5, 7)]),
     ],
 )
 def test_extract_subroutines_from_bytes(test_data: bytes, offset: int, expected: list[SubroutineInfo]):
