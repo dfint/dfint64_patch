@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO, cast
 
-from loguru import logger
 from omegaconf import DictConfig
 from peclasses.portable_executable import PortableExecutable
 
@@ -55,9 +54,8 @@ class ExtractConfig(DictConfig):
 @with_config(ExtractConfig, ".extract.yaml")
 def main(conf: ExtractConfig) -> None:
     with Path(conf.file_name).open("rb") as pe_file, maybe_open(conf.out_file) as out_file_object:
-        for address, string in extract_strings(pe_file):
-            print(string, file=out_file_object)
-            logger.info(f"0x{address:X} {string!r}")
+        for item in extract_strings(pe_file):
+            print(item.string, file=out_file_object)
 
 
 if __name__ == "__main__":

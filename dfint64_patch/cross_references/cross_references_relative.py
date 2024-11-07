@@ -2,6 +2,8 @@ from collections import defaultdict
 from collections.abc import Iterable, Iterator, Mapping
 from itertools import chain
 
+from tqdm import tqdm
+
 from dfint64_patch.type_aliases import Rva
 
 REFERENCE_SIZE = 4
@@ -26,10 +28,10 @@ def find_relative_cross_references(
     if not isinstance(addresses, range | dict):
         addresses = set(addresses)
 
-    for i in range(len(bytes_block) - 3):
-        relative_offset = int.from_bytes(bytes(view[i : i + 4]), byteorder="little", signed=True)
+    for i in tqdm(range(len(bytes_block) - REFERENCE_SIZE + 1), desc="find_relative_cross_references"):
+        relative_offset = int.from_bytes(bytes(view[i : i + REFERENCE_SIZE]), byteorder="little", signed=True)
 
-        destination = Rva(base_address + i + 4 + relative_offset)
+        destination = Rva(base_address + i + REFERENCE_SIZE + relative_offset)
 
         if destination in addresses:
             result[destination].append(Rva(base_address + i))
