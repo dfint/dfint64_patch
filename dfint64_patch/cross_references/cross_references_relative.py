@@ -10,7 +10,7 @@ REFERENCE_SIZE = 4
 
 
 def find_relative_cross_references_low(
-    bytes_block: bytes, base_address: Rva, addresses: range | dict | set
+    bytes_block: bytes, base_address: Rva, addresses: Iterable[int]
 ) -> Iterator[tuple[int, int]]:
     for i in range(len(bytes_block) - REFERENCE_SIZE + 1):
         relative_offset = int.from_bytes(bytes_block[i : i + REFERENCE_SIZE], byteorder="little", signed=True)
