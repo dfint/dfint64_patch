@@ -22,14 +22,13 @@ def find_relative_cross_references(
         (e.g. `range(0x11000, 0x12000)`) or dict object.
     :return: Mapping[object_rva: Rva, cross_references: List[Rva]]
     """
-    view = memoryview(bytes_block)
     result = defaultdict(list)
 
     if not isinstance(addresses, range | dict):
         addresses = set(addresses)
 
     for i in tqdm(range(len(bytes_block) - REFERENCE_SIZE + 1), desc="find_relative_cross_references"):
-        relative_offset = int.from_bytes(bytes(view[i : i + REFERENCE_SIZE]), byteorder="little", signed=True)
+        relative_offset = int.from_bytes(bytes_block[i : i + REFERENCE_SIZE], byteorder="little", signed=True)
 
         destination = Rva(base_address + i + REFERENCE_SIZE + relative_offset)
 
