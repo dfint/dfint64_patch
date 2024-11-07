@@ -10,34 +10,23 @@ from typing import NamedTuple
 
 from dfint64_patch.type_aliases import RVA0, Rva
 
-forbidden: set[int] = set(b"$^@")
-allowed: set[int] = set()
+forbidden: str = "$^@"
 
-ASCII_MAX_CODE = 127
-
-
-def is_allowed(x: int) -> bool:
-    return x in allowed or (ord(" ") <= x <= ASCII_MAX_CODE and x not in forbidden)
+ASCII_MAX_CHAR = chr(127)
 
 
-def check_string(buf: bytes | memoryview) -> int | None:
+def is_allowed(c: str) -> bool:
+    return " " <= c <= ASCII_MAX_CHAR and c not in forbidden
+
+
+def check_string(buf: str) -> bool:
     """
     Check that the buffer contain letters and doesn't contain forbidden characters
 
     :param buf: byte buffer
     :return: number_of_letters: int
     """
-
-    number_of_letters = 0
-    for i, c in enumerate(buf):
-        current_byte = bytes(buf[i : i + 1])
-        if not is_allowed(c):
-            return None
-
-        if current_byte.isalpha():
-            number_of_letters += 1
-
-    return number_of_letters
+    return any(c.isalpha() for c in buf) and all(is_allowed(c) for c in buf)
 
 
 class ExtractedStringInfo(NamedTuple):
@@ -71,11 +60,11 @@ def extract_strings_from_raw_bytes(
         string_len = end_index - i
         buffer_part = view[i:end_index]
 
-        if check_string(buffer_part):
-            try:
-                string = bytes(buffer_part).decode(encoding)
+        try:
+            string = bytes(buffer_part).decode(encoding)
+            if check_string(string):
                 yield ExtractedStringInfo(Rva(base_address + i), string)
-            except UnicodeDecodeError:
-                pass
+        except UnicodeDecodeError:
+            pass
 
         i += (string_len // alignment + 1) * alignment
