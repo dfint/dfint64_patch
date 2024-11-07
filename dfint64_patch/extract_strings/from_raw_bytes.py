@@ -55,7 +55,6 @@ def extract_strings_from_raw_bytes(
             continue
 
         end_index = bytes_block.index(b"\0", i)
-        string_len = end_index - i
         buffer_part = bytes_block[i:end_index]
 
         try:
@@ -65,4 +64,5 @@ def extract_strings_from_raw_bytes(
         except UnicodeDecodeError:
             pass
 
+        string_len = end_index - i
         i += (string_len // alignment + 1) * alignment
