@@ -1,16 +1,19 @@
 import functools
 from collections.abc import Callable
+from typing import TypeVar
 
 from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
+T = TypeVar("T", bound=DictConfig)
 
-def with_config(config_class: type, *config_files: str) -> Callable[[Callable[[DictConfig], None]], Callable[[], None]]:
+
+def with_config(config_class: type, *config_files: str) -> Callable[[Callable[[T], None]], Callable[[], None]]:
     """
     A decorator to load the config file and merge it with the CLI options.
     """
 
-    def decorator(func: Callable[[DictConfig], None]) -> Callable[[], None]:
+    def decorator(func: Callable[[T], None]) -> Callable[[], None]:
         @functools.wraps(func)
         def wrapper() -> None:
             config = OmegaConf.structured(config_class)
