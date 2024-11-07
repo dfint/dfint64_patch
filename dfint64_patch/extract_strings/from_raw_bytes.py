@@ -48,8 +48,6 @@ def extract_strings_from_raw_bytes(
     :param encoding: string encoding
     :return: Iterator[ExtractedStringInfo]
     """
-    view = memoryview(bytes_block)
-
     i = 0
     while i < len(bytes_block):
         if bytes_block[i] == b"\0":
@@ -58,7 +56,7 @@ def extract_strings_from_raw_bytes(
 
         end_index = bytes_block.index(b"\0", i)
         string_len = end_index - i
-        buffer_part = view[i:end_index]
+        buffer_part = bytes_block[i:end_index]
 
         try:
             string = bytes(buffer_part).decode(encoding)
