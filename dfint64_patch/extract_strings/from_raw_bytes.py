@@ -20,38 +20,24 @@ def is_allowed(x: int) -> bool:
     return x in allowed or (ord(" ") <= x <= ASCII_MAX_CODE and x not in forbidden)
 
 
-def possible_to_decode(c: bytes, encoding: str) -> bool:
-    try:
-        c.decode(encoding=encoding)
-    except UnicodeDecodeError:
-        return False
-    else:
-        return True
-
-
-def check_string(buf: bytes | memoryview, encoding: str) -> tuple[int, int]:
+def check_string(buf: bytes | memoryview) -> int | None:
     """
-    Try to decode bytes as a string in the given encoding
+    Check that the buffer contain letters and doesn't contain forbidden characters
+
     :param buf: byte buffer
-    :param encoding: string encoding
-    :return: (string_length: int, number_of_letters: int)
+    :return: number_of_letters: int
     """
 
-    string_length = 0
     number_of_letters = 0
     for i, c in enumerate(buf):
-        if c == 0:
-            string_length = i
-            break
-
         current_byte = bytes(buf[i : i + 1])
-        if not is_allowed(c) or not possible_to_decode(current_byte, encoding):
-            break
+        if not is_allowed(c):
+            return None
 
         if current_byte.isalpha():
             number_of_letters += 1
 
-    return string_length, number_of_letters
+    return number_of_letters
 
 
 class ExtractedStringInfo(NamedTuple):
@@ -76,13 +62,20 @@ def extract_strings_from_raw_bytes(
     view = memoryview(bytes_block)
 
     i = 0
-    while i < len(view):
-        buffer_part = view[i:]
-        string_len, letters = check_string(buffer_part, encoding)
-        if string_len and letters:
-            string = bytes(view[i : i + string_len]).decode(encoding)
-            yield ExtractedStringInfo(Rva(base_address + i), string)
-            i += (string_len // alignment + 1) * alignment
+    while i < len(bytes_block):
+        if bytes_block[i] == b"\0":
+            i += alignment
             continue
 
-        i += alignment
+        end_index = bytes_block.index(b"\0", i)
+        string_len = end_index - i
+        buffer_part = view[i:end_index]
+
+        if check_string(buffer_part):
+            try:
+                string = bytes(buffer_part).decode(encoding)
+                yield ExtractedStringInfo(Rva(base_address + i), string)
+            except UnicodeDecodeError:
+                pass
+
+        i += (string_len // alignment + 1) * alignment
