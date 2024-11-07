@@ -30,10 +30,10 @@ def find_relative_cross_references(
     for i in tqdm(range(len(bytes_block) - REFERENCE_SIZE + 1), desc="find_relative_cross_references"):
         relative_offset = int.from_bytes(bytes_block[i : i + REFERENCE_SIZE], byteorder="little", signed=True)
 
-        destination = Rva(base_address + i + REFERENCE_SIZE + relative_offset)
+        destination = base_address + i + REFERENCE_SIZE + relative_offset
 
         if destination in addresses:
-            result[destination].append(Rva(base_address + i))
+            result[destination].append(base_address + i)
 
     return result
 
