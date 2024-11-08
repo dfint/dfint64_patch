@@ -9,7 +9,7 @@ from dfint64_patch.type_aliases import Rva
 REFERENCE_SIZE = 4
 
 
-def find_relative_cross_references_low(
+def find_relative_cross_references_loop(
     bytes_block: bytes, base_address: Rva, addresses: Iterable[int]
 ) -> Iterator[tuple[int, int]]:
     """
@@ -48,7 +48,7 @@ def find_relative_cross_references(
         addresses = set(addresses)
 
     for destination, source in tqdm(
-        find_relative_cross_references_low(bytes_block, base_address, addresses),
+        find_relative_cross_references_loop(bytes_block, base_address, addresses),
         desc="find_relative_cross_references",
     ):
         result[destination].append(source)
