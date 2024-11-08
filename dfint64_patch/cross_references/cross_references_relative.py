@@ -17,7 +17,8 @@ def find_relative_cross_references_loop(
     Optimized hot loop, don't add extra stuff to the loop (like conversion to Rva etc.)
 
     :param bytes_block: bytes block to analyse
-    :param base_address: base address of the given block
+    :param base_address: base address of the given block (preferably this should be of some type with fast "in" check,
+        like set, dict, range or short tuple)
     :param addresses: an iterable of destination addresses
     :return: pairs of destinations and source addresses
     """
