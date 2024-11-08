@@ -19,14 +19,15 @@ from .utils import get_exe_stdout
 
 
 @pytest.mark.parametrize(
-    ("test_data", "encoding", "expected"),
+    ("test_data", "expected"),
     [
-        (b"12345\0", "cp437", (5, 0)),
-        (b"12345\xff\0", "utf-8", (0, 0)),
+        ("12345", False),
+        ("12345\xff", False),
+        ("1234abc5", True),
     ],
 )
-def test_check_string(test_data: bytes, encoding: str, expected: tuple[int, int]):
-    assert check_string(test_data, encoding) == expected
+def test_check_string(test_data: str, expected: bool):
+    assert check_string(test_data) == expected
 
 
 @pytest.mark.parametrize(

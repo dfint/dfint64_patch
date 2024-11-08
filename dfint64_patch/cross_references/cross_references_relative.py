@@ -9,6 +9,27 @@ from dfint64_patch.type_aliases import Rva
 REFERENCE_SIZE = 4
 
 
+def find_relative_cross_references_loop(
+    bytes_block: bytes, base_address: Rva, addresses: Iterable[int]
+) -> Iterator[tuple[int, int]]:
+    """
+    Analyse a block of bytes and try to find relative cross-references to the given objects' addresses.
+    Optimized hot loop, don't add extra stuff to the loop (like conversion to Rva etc.)
+
+    :param bytes_block: bytes block to analyse
+    :param base_address: base address of the given block (preferably this should be of some type with fast "in" check,
+        like set, dict, range or short tuple)
+    :param addresses: an iterable of destination addresses
+    :return: pairs of destinations and source addresses
+    """
+    for i in range(len(bytes_block) - REFERENCE_SIZE + 1):
+        relative_offset = int.from_bytes(bytes_block[i : i + REFERENCE_SIZE], byteorder="little", signed=True)
+        destination = base_address + i + REFERENCE_SIZE + relative_offset
+
+        if destination in addresses:
+            yield destination, base_address + i
+
+
 def find_relative_cross_references(
     bytes_block: bytes,
     base_address: Rva,
@@ -22,19 +43,16 @@ def find_relative_cross_references(
         (e.g. `range(0x11000, 0x12000)`) or dict object.
     :return: Mapping[object_rva: Rva, cross_references: List[Rva]]
     """
-    view = memoryview(bytes_block)
     result = defaultdict(list)
 
     if not isinstance(addresses, range | dict):
         addresses = set(addresses)
 
-    for i in tqdm(range(len(bytes_block) - REFERENCE_SIZE + 1), desc="find_relative_cross_references"):
-        relative_offset = int.from_bytes(bytes(view[i : i + REFERENCE_SIZE]), byteorder="little", signed=True)
-
-        destination = Rva(base_address + i + REFERENCE_SIZE + relative_offset)
-
-        if destination in addresses:
-            result[destination].append(Rva(base_address + i))
+    for destination, source in tqdm(
+        find_relative_cross_references_loop(bytes_block, base_address, addresses),
+        desc="find_relative_cross_references",
+    ):
+        result[destination].append(source)
 
     return result
 
