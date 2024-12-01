@@ -11,7 +11,7 @@ click = "^8.1.7"
 loguru = "^0.7.2"
 peclasses = {version = "^0.4.0", source = "dfint"}
 omegaconf = "^2.3.0"
-poethepoet = "^0.29.0"
+poethepoet = "^0.31.1"
 tqdm = "^4.67.1"
 
 [tool.poetry.group.dev.dependencies]
