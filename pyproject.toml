@@ -47,10 +47,9 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "T201",   # `print` found
-    "S101",   # Use of assert detected
-    "ANN101", # Missing type annotation for self in method
-    "C408",   # Unnecessary `dict` call (rewrite as a literal)
+    "T201", # `print` found
+    "S101", # Use of assert detected
+    "C408", # Unnecessary `dict` call (rewrite as a literal)
     "D",
     # "D100",  # Missing docstring in public module
     # "D104",  # Missing docstring in public package
