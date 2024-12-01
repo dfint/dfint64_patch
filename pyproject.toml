@@ -9,9 +9,8 @@ license = "MIT License"
 python = "^3.10"
 click = "^8.1.7"
 loguru = "^0.7.2"
-peclasses = {version = "^0.4.0", source = "dfint"}
+peclasses = { version = "^0.4.0", source = "dfint" }
 omegaconf = "^2.3.0"
-poethepoet = "^0.29.0"
 tqdm = "^4.67.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -48,28 +47,28 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "T201",  # `print` found
-    "S101",  # Use of assert detected
-    "ANN101",  # Missing type annotation for self in method
-    "C408",  # Unnecessary `dict` call (rewrite as a literal)
+    "T201",   # `print` found
+    "S101",   # Use of assert detected
+    "ANN101", # Missing type annotation for self in method
+    "C408",   # Unnecessary `dict` call (rewrite as a literal)
     "D",
     # "D100",  # Missing docstring in public module
     # "D104",  # Missing docstring in public package
     # "D105",  # Missing docstring in magic method
     # "D200",  # One-line docstring should fit on one line
     # "D212",  # Multi-line docstring summary should start at the first line
-    "TD",  # Ignore todo warnings
-    "FIX002",  # Ignore todo warnings
-    "COM812",  # Ignore missing trailing comma warning, which conflicts with formatter
+    "TD",     # Ignore todo warnings
+    "FIX002", # Ignore todo warnings
+    "COM812", # Ignore missing trailing comma warning, which conflicts with formatter
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-    "S101",  # Don't warn about using of asserts in tests
+    "S101",    # Don't warn about using of asserts in tests
     "ANN201",  # Ignore "Missing return type annotation for public function", tests don't return anything
-    "D",  # Don't warn about missing documentation in tests
+    "D",       # Don't warn about missing documentation in tests
     "RUF001",  # String contains ambiguous {}. Did you mean {}?
-    "S311",  # Standard pseudo-random generators are not suitable for cryptographic purposes
-    "PLR2004",  # Magic value used in comparison
+    "S311",    # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "PLR2004", # Magic value used in comparison
     "FBT001",  # Ignore boolean positional argument
 ]
