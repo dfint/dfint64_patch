@@ -7,7 +7,7 @@ license = "MIT License"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-click = "^8.1.7"
+click = "^8.1.8"
 loguru = "^0.7.2"
 peclasses = { version = "^0.4.0", source = "dfint" }
 omegaconf = "^2.3.0"
