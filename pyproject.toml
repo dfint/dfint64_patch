@@ -16,10 +16,10 @@ tqdm = "^4.67.1"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
-hypothesis = "^6.123.2"
+hypothesis = "^6.124.9"
 coverage = "^7.6.10"
 mypy = "^1.14.1"
-ruff = "^0.8.4"
+ruff = "^0.9.4"
 
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
