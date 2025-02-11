@@ -1,8 +1,6 @@
 from collections.abc import Iterable
 from typing import BinaryIO
 
-from peclasses.section_table import Section
-
 from dfint64_patch.type_aliases import Offset
 
 
@@ -40,11 +38,3 @@ def write_string(
     bs = s.encode() if encoding is None else s.encode(encoding)
 
     file_object.write(bs.ljust(new_len, b"\0"))
-
-
-def read_section_data(file: BinaryIO, section: Section) -> bytes:
-    return read_bytes(
-        file,
-        Offset(section.pointer_to_raw_data),
-        Offset(section.size_of_raw_data),
-    )
