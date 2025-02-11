@@ -1,12 +1,11 @@
 import operator
 from dataclasses import dataclass
+from io import BufferedReader
 from pathlib import Path
-from typing import BinaryIO, cast
 
+import lief
 from omegaconf import DictConfig
-from peclasses.portable_executable import PortableExecutable
 
-from dfint64_patch.binio import read_section_data
 from dfint64_patch.config import with_config
 from dfint64_patch.cross_references.cross_references_relative import (
     find_relative_cross_references,
@@ -19,25 +18,25 @@ from dfint64_patch.type_aliases import Rva
 from dfint64_patch.utils import maybe_open
 
 
-def extract_strings(pe_file: BinaryIO) -> list[ExtractedStringInfo]:
-    pe = PortableExecutable(pe_file)
+def extract_strings(pe_file: BufferedReader) -> list[ExtractedStringInfo]:
+    pe = lief.PE.parse(pe_file)
+    assert pe is not None
 
-    sections = pe.section_table
-    code_section = sections[0]
-    string_section = sections[1]
+    code_section = pe.sections[0]
+    string_section = pe.sections[1]
 
-    image_base = pe.optional_header.image_base
+    image_base = pe.optional_header.imagebase
 
     strings = list(
         extract_strings_from_raw_bytes(
-            read_section_data(pe_file, string_section),
-            base_address=Rva(cast(int, string_section.virtual_address) + image_base),
+            string_section.content,
+            base_address=Rva(string_section.virtual_address + image_base),
         ),
     )
 
     cross_references = find_relative_cross_references(
-        read_section_data(pe_file, code_section),
-        base_address=Rva(cast(int, code_section.virtual_address) + image_base),
+        code_section.content,
+        base_address=Rva(code_section.virtual_address + image_base),
         addresses=map(operator.itemgetter(0), strings),
     )
 

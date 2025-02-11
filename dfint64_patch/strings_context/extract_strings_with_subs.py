@@ -4,14 +4,14 @@ Extract strings grouped by subroutines
 
 from collections import defaultdict
 from dataclasses import dataclass
+from io import BufferedReader
 from operator import itemgetter
 from pathlib import Path
-from typing import BinaryIO, NamedTuple
+from typing import NamedTuple
 
+import lief
 from omegaconf import DictConfig
-from peclasses.portable_executable import PortableExecutable
 
-from dfint64_patch.binio import read_section_data
 from dfint64_patch.config import with_config
 from dfint64_patch.cross_references.cross_references_relative import find_relative_cross_references
 from dfint64_patch.extract_strings.from_raw_bytes import ExtractedStringInfo, extract_strings_from_raw_bytes
@@ -19,21 +19,20 @@ from dfint64_patch.extract_subroutines.from_raw_bytes import SubroutineInfo, ext
 from dfint64_patch.type_aliases import Rva
 
 
-def extract_strings_with_xrefs(pe_file: BinaryIO, pe: PortableExecutable) -> dict[ExtractedStringInfo, list[Rva]]:
-    sections = pe.section_table
-    code_section = sections[0]
-    string_section = sections[1]
+def extract_strings_with_xrefs(pe: lief.PE.Binary) -> dict[ExtractedStringInfo, list[Rva]]:
+    code_section = pe.sections[0]
+    string_section = pe.sections[1]
 
     strings = list(
         extract_strings_from_raw_bytes(
-            read_section_data(pe_file, string_section),
-            base_address=string_section.virtual_address,
+            string_section.content,
+            base_address=Rva(string_section.virtual_address),
         ),
     )
 
     cross_references = find_relative_cross_references(
-        read_section_data(pe_file, code_section),
-        base_address=code_section.virtual_address,
+        code_section.content,
+        base_address=Rva(code_section.virtual_address),
         addresses=map(itemgetter(0), strings),
     )
 
@@ -49,18 +48,18 @@ class StringCrossReference(NamedTuple):
     cross_reference: Rva
 
 
-def extract_strings_grouped_by_subs(pe_file: BinaryIO) -> dict[Rva, list[StringCrossReference]]:
-    pe = PortableExecutable(pe_file)
-    sections = pe.section_table
-    code_section = sections[0]
+def extract_strings_grouped_by_subs(pe_file: BufferedReader) -> dict[Rva, list[StringCrossReference]]:
+    pe = lief.PE.parse(pe_file)
+    assert pe is not None
+    code_section = pe.sections[0]
 
-    image_base = pe.optional_header.image_base
+    image_base = pe.optional_header.imagebase
 
-    strings_with_xrefs = extract_strings_with_xrefs(pe_file, pe)
+    strings_with_xrefs = extract_strings_with_xrefs(pe)
 
     subroutines = list(
         extract_subroutines(
-            read_section_data(pe_file, code_section),
+            code_section.content,
             base_offset=code_section.virtual_address,
         )
     )

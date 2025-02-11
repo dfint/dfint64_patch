@@ -35,7 +35,7 @@ class ExtractedStringInfo(NamedTuple):
 
 
 def extract_strings_from_raw_bytes(
-    bytes_block: bytes,
+    bytes_block: bytes | memoryview,
     base_address: Rva = RVA0,
     alignment: int = 4,
     encoding: str = "cp437",
@@ -48,6 +48,7 @@ def extract_strings_from_raw_bytes(
     :param encoding: string encoding
     :return: Iterator[ExtractedStringInfo]
     """
+    bytes_block = bytes(bytes_block)
     i = 0
     while i < len(bytes_block):
         if bytes_block[i] == b"\0":
