@@ -14,12 +14,12 @@ tqdm = "^4.67.1"
 lief = "^0.16.4"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
-hypothesis = "^6.127.3"
-coverage = "^7.6.12"
+pytest = "^8.3.5"
+pytest-cov = "^6.1.0"
+hypothesis = "^6.130.6"
+coverage = "^7.8.0"
 mypy = "^1.14.1"
-ruff = "^0.9.9"
+ruff = "^0.11.2"
 
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
