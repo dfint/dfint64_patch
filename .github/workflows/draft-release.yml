@@ -22,13 +22,14 @@ jobs:
           cache-dependency-path: poetry.lock
       
       - name: Build project
+        id: build
         run: |
           poetry build
-          echo "version=$(poetry version --short)" >> "$GITHUB_ENV"
+          echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          tag_name: ${{ env.version }}
+          tag_name: ${{ steps.build.outputs.version }}
           draft: true
