@@ -16,10 +16,10 @@ lief = "^0.16.5"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-cov = "^6.1.1"
-hypothesis = "^6.131.9"
-coverage = "^7.8.0"
-mypy = "^1.14.1"
-ruff = "^0.11.8"
+hypothesis = "^6.132.0"
+coverage = "^7.8.2"
+mypy = "^1.16.0"
+ruff = "^0.11.12"
 
 [tool.poetry.scripts]
 extract = "dfint64_patch.extract_strings.cli:main"
