@@ -4,7 +4,6 @@ Extract strings grouped by subroutines
 
 from collections import defaultdict
 from dataclasses import dataclass
-from io import BufferedReader
 from operator import itemgetter
 from pathlib import Path
 from typing import NamedTuple
@@ -68,13 +67,8 @@ def group_by_subroutines(
     return raw_result
 
 
-def extract_strings_grouped_by_subs(pe_file: BufferedReader) -> dict[Rva, list[StringCrossReference]]:
-    pe = lief.PE.parse(pe_file)
-    assert pe is not None
+def extract_strings_grouped_by_subs(pe: lief.PE.Binary) -> dict[SubroutineInfo, list[StringCrossReference]]:
     code_section = pe.sections[0]
-
-    image_base = pe.optional_header.imagebase
-
     strings_with_xrefs = extract_strings_with_xrefs(pe)
 
     subroutines = list(
@@ -89,10 +83,10 @@ def extract_strings_grouped_by_subs(pe_file: BufferedReader) -> dict[Rva, list[S
 
     raw_result = group_by_subroutines(strings_with_xrefs, subroutines)
 
-    result: dict[Rva, list[StringCrossReference]] = {}
+    result: dict[SubroutineInfo, list[StringCrossReference]] = {}
     for subroutine, string_xrefs in sorted(raw_result.items(), key=itemgetter(0)):
         sorted_xrefs = sorted(string_xrefs, key=lambda x: x.cross_reference)
-        result[Rva(image_base + subroutine.start)] = sorted_xrefs
+        result[subroutine] = sorted_xrefs
 
     return result
 
@@ -106,8 +100,12 @@ class ExtractConfig(DictConfig):
 @with_config(ExtractConfig, ".extract.yaml")
 def main(conf: ExtractConfig) -> None:
     with Path(conf.file_name).open("rb") as pe_file:
-        for subroutine, strings in extract_strings_grouped_by_subs(pe_file).items():
-            print(f"[sub_{subroutine:x}]")
+        pe = lief.PE.parse(pe_file)
+        assert pe is not None
+
+        image_base = pe.optional_header.imagebase
+        for subroutine, strings in extract_strings_grouped_by_subs(pe).items():
+            print(f"[sub_{image_base + subroutine.start:x}]")
             for string in strings:
                 print(string.string)
 
