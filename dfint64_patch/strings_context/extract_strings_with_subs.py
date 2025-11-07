@@ -11,6 +11,7 @@ from typing import NamedTuple
 
 import lief
 from omegaconf import DictConfig
+from tqdm import tqdm
 
 from dfint64_patch.config import with_config
 from dfint64_patch.cross_references.cross_references_relative import find_relative_cross_references
@@ -24,9 +25,12 @@ def extract_strings_with_xrefs(pe: lief.PE.Binary) -> dict[ExtractedStringInfo, 
     string_section = pe.sections[1]
 
     strings = list(
-        extract_strings_from_raw_bytes(
-            string_section.content,
-            base_address=Rva(string_section.virtual_address),
+        tqdm(
+            extract_strings_from_raw_bytes(
+                string_section.content,
+                base_address=Rva(string_section.virtual_address),
+            ),
+            desc="extract_strings_from_raw_bytes",
         ),
     )
 
@@ -48,6 +52,22 @@ class StringCrossReference(NamedTuple):
     cross_reference: Rva
 
 
+def group_by_subroutines(
+    strings_with_xrefs: dict[ExtractedStringInfo, list[Rva]],
+    subroutines: list[SubroutineInfo],
+) -> dict[SubroutineInfo, list[StringCrossReference]]:
+    raw_result: dict[SubroutineInfo, list[StringCrossReference]] = defaultdict(list)
+
+    for string_info, xrefs in tqdm(strings_with_xrefs.items(), desc="group_by_subroutines"):
+        for xref in xrefs:
+            subroutine = which_subroutine(subroutines, xref)
+            if not subroutine:
+                continue
+            raw_result[subroutine].append(StringCrossReference(string_info.string, xref))
+
+    return raw_result
+
+
 def extract_strings_grouped_by_subs(pe_file: BufferedReader) -> dict[Rva, list[StringCrossReference]]:
     pe = lief.PE.parse(pe_file)
     assert pe is not None
@@ -58,19 +78,16 @@ def extract_strings_grouped_by_subs(pe_file: BufferedReader) -> dict[Rva, list[S
     strings_with_xrefs = extract_strings_with_xrefs(pe)
 
     subroutines = list(
-        extract_subroutines(
-            code_section.content,
-            base_offset=code_section.virtual_address,
+        tqdm(
+            extract_subroutines(
+                code_section.content,
+                base_offset=code_section.virtual_address,
+            ),
+            desc="extract_subroutines",
         )
     )
 
-    raw_result: dict[SubroutineInfo, list[StringCrossReference]] = defaultdict(list)
-    for string_info, xrefs in strings_with_xrefs.items():
-        for xref in xrefs:
-            subroutine = which_subroutine(subroutines, xref)
-            if not subroutine:
-                continue
-            raw_result[subroutine].append(StringCrossReference(string_info.string, xref))
+    raw_result = group_by_subroutines(strings_with_xrefs, subroutines)
 
     result: dict[Rva, list[StringCrossReference]] = {}
     for subroutine, string_xrefs in sorted(raw_result.items(), key=itemgetter(0)):
@@ -90,9 +107,9 @@ class ExtractConfig(DictConfig):
 def main(conf: ExtractConfig) -> None:
     with Path(conf.file_name).open("rb") as pe_file:
         for subroutine, strings in extract_strings_grouped_by_subs(pe_file).items():
-            print(f"sub_{subroutine:x}:")
+            print(f"[sub_{subroutine:x}]")
             for string in strings:
-                print(f"\t{string.string}")
+                print(string.string)
 
             print()
 
