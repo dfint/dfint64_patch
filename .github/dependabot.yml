@@ -9,7 +9,6 @@ updates:
         patterns:
           - "coverage"
           - "hypothesis"
-          - "mypy"
           - "pytest*"
           - "ruff"
 
