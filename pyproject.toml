@@ -6,7 +6,7 @@ authors = ["insolor <insolor@gmail.com>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.12"
 click = "^8.3.1"
 loguru = "^0.7.3"
 omegaconf = "^2.3.0"
@@ -18,7 +18,7 @@ pytest = "^9.0.2"
 pytest-cov = "^7.1.0"
 hypothesis = "^6.151.10"
 coverage = "^7.13.5"
-mypy = "^1.20.0"
+mypy = ">=1.20.0,<2"
 ruff = "^0.15.8"
 
 [tool.poetry.scripts]
@@ -41,7 +41,7 @@ build-backend = "poetry.core.masonry.api"
 ignore_missing_imports = true
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 line-length = 120
 
 [tool.ruff.lint]
