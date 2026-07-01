@@ -27,6 +27,7 @@ patch = "dfint64_patch.patch:main"
 
 [tool.poe.tasks]
 extract.script = "dfint64_patch.extract_strings.cli:main"
+extract_with_subs.script = "dfint64_patch.strings_context.extract_strings_with_subs:main"
 
 [[tool.poetry.source]]
 name = "dfint"
