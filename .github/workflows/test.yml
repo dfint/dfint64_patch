@@ -24,14 +24,14 @@ jobs:
       run: pipx install poetry
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
         cache: "poetry"
         cache-dependency-path: poetry.lock
 
     - name: Install fasm
-      uses: stevenwdv/setup-fasm@v1
+      uses: stevenwdv/setup-fasm@v2
 
     - name: Compile test exe file
       run: |
