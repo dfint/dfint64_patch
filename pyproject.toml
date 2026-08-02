@@ -50,6 +50,7 @@ ignore = [
     "T201", # `print` found
     "S101", # Use of assert detected
     "C408", # Unnecessary `dict` call (rewrite as a literal)
+    "CPY001",
     "D",
     # "D100",  # Missing docstring in public module
     # "D104",  # Missing docstring in public package
