@@ -11,7 +11,7 @@ class SubroutineInfo(NamedTuple):
     end: int  # exclusive
 
 
-def extract_subroutines(buffer: bytes, base_offset: int = 0) -> Iterator[SubroutineInfo]:
+def extract_subroutines(buffer: bytes | memoryview, base_offset: int = 0) -> Iterator[SubroutineInfo]:
     start = 0
 
     for match in re.finditer(rb"\xCC+", buffer):

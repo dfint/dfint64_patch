@@ -10,7 +10,7 @@ REFERENCE_SIZE = 4
 
 
 def find_relative_cross_references_loop(
-    bytes_block: bytes, base_address: Rva, addresses: Iterable[int]
+    bytes_block: bytes | memoryview, base_address: Rva, addresses: Iterable[int]
 ) -> Iterator[tuple[int, int]]:
     """
     Analyse a block of bytes and try to find relative cross-references to the given objects' addresses.
@@ -31,7 +31,7 @@ def find_relative_cross_references_loop(
 
 
 def find_relative_cross_references(
-    bytes_block: bytes,
+    bytes_block: bytes | memoryview,
     base_address: Rva,
     addresses: Iterable[Rva],
 ) -> Mapping[Rva, list[Rva]]:
