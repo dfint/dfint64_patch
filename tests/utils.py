@@ -58,6 +58,10 @@ def get_random_string(length: int, not_equals: str | None = None) -> str:
 
         generated_string = " ".join(words)[:length]
         if generated_string.endswith(" "):
+            counter += 1
+            if counter >= _MAX_RETRIES:
+                msg = "Infinite loop"
+                raise ValueError(msg)
             continue
 
         if not_equals is None or generated_string != not_equals:
